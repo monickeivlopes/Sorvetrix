@@ -4,12 +4,12 @@ Projeto Interdisciplinar que abrange as matérias:
 - Programação Orientada a Serviços
 - Projeto de Desenvolvimento de Sistemas para Internet
 
--- Proposta --
+# Proposta
 Sistema de gerenciamento para uma sorveteria
 
--- Integrantes --
-Eunice Cristina 
-Gabriely Medeiros 
-Lívia Vitória
-Monicke Lopes
-Wesley Darlly
+# Desenvolvedores
+- Eunice Cristina 
+- Gabriely Medeiros 
+- Lívia Vitória
+- Monicke Lopes
+- Wesley Darlly
