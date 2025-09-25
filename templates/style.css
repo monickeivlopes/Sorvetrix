@@ -1,0 +1,178 @@
+/* SUAS VARIÁVEIS CSS ORIGINAIS */
+:root {
+  --rosa: #f38fc5;
+  --rosa-claro: #ffc1da;
+  --bege: #fdefdb;
+  --azul: #8edbe6;
+  --amarelo: #ffcd5c;
+  --branco-gelo: #fff4e1;
+  
+  /* Variáveis para espaçamentos e sombras para consistência */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 4rem;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+  
+  /* Transições padrão para interatividade suave */
+  --transition-base: all 0.2s ease;
+  --transition-hover: transform 0.18s ease, background 0.18s ease;
+}
+
+/* ESTILOS GERAIS */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: var(--azul); 
+    min-height: 100vh;
+    display: flex; /* Para centralizar o login-wrapper */
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-sm);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 1. CONTAINER GERAL (O CARD GRANDE) */
+.login-wrapper {
+    display: flex;
+    background-color: #fff; /* O fundo branco dentro da sombra */
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden; 
+    max-width: 900px; /* Limite de largura para desktop */
+    width: 100%;
+    min-height: 500px; 
+}
+
+/* 2. LADO ESQUERDO (AZUL) */
+.login-left-side {
+    background-color: var(--azul); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+    /* Oculto em mobile, aparecerá em telas maiores que md */
+    display: none; 
+}
+
+/* 3. LADO DIREITO (ROSA) */
+.login-right-side {
+    background-color: var(--rosa); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+    flex-grow: 1; /* Ocupa 100% em mobile */
+}
+
+/* Media Query para a Divisão (Split) */
+@media (min-width: 768px) {
+    .login-left-side {
+        display: flex;
+        flex: 1; /* Ocupa 50% */
+    }
+    .login-right-side {
+        flex: 1; /* Ocupa 50% */
+    }
+}
+
+/* ÍCONE DE USUÁRIO (Círculo Branco) */
+.user-icon {
+    font-size: 4rem; 
+    color: var(--branco-gelo); 
+    border: 2px solid var(--branco-gelo);
+    border-radius: 50%;
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+    display: inline-flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+.user-icon svg {
+    width: 1em; 
+    height: 1em;
+}
+
+/* INPUTS (Transparentes com Borda Branca Gelo) */
+.form-control-custom {
+    background-color: transparent; 
+    border: 2px solid var(--branco-gelo); 
+    color: var(--branco-gelo); 
+    border-radius: 30px; 
+    padding: 0.75rem 1.25rem;
+    margin-bottom: var(--spacing-sm);
+    /* Garante que o input ocupe a largura total */
+    width: 100%;
+    /* Estilos do Bootstrap que precisamos garantir que não anulem a transparência */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-control-custom::placeholder {
+    color: var(--branco-gelo); 
+    opacity: 0.7;
+}
+
+/* FOCO (Amarelo) */
+.form-control-custom:focus {
+    background-color: rgb(255, 255, 255); 
+    border-color: var(--amarelo); 
+    /* Adicionando o outline para acessibilidade e efeito visual */
+    box-shadow: 0 0 0 0.25rem rgb(255, 255, 255); 
+    color: var(--branco-gelo);
+}
+
+/* LINKS (Branco Gelo) */
+.login-form-link {
+    color: var(--branco-gelo); 
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: var(--transition-base);
+}
+
+.login-form-link:hover {
+    color: var(--amarelo); 
+    text-decoration: underline;
+}
+
+/* BOTÃO LOGIN (Amarelo) */
+.btn-login-custom {
+    background-color: var(--amarelo);
+    color: white;
+    border-radius: 30px;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border: none;
+    transition: var(--transition-hover);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-login-custom:hover {
+    background-color: #ffde7a; 
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+.btn-login-custom:focus {
+    outline: 2px solid var(--amarelo);
+    outline-offset: 3px;
+    box-shadow: var(--shadow-md);
+}
+

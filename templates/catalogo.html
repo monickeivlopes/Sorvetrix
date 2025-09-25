@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SorveTrix — Catálogo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* SUAS VARIÁVEIS CSS ORIGINAIS */
+        :root {
+          --rosa: #f38fc5;
+          --rosa-claro: #ffc1da;
+          --bege: #fdefdb;
+          --azul: #8edbe6;
+          --amarelo: #ffcd5c;
+          --branco-gelo: #fff4e1;
+          
+          /* Variáveis para espaçamentos e sombras para consistência */
+          --spacing-xs: 0.5rem;
+          --spacing-sm: 1rem;
+          --spacing-md: 2rem;
+          --spacing-lg: 3rem;
+          --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+          --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.12);
+          
+          /* Cores de texto */
+          --text-default: #333; /* Texto escuro */
+          --text-light: #fff;
+        }
+
+        /* ESTILOS GERAIS DE FUNDO E CORPO */
+        * {
+          box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bege); 
+            color: var(--text-default); /* Corrigido para texto escuro */
+            min-height: 100vh;
+            
+            /* CHAVE PARA FOOTER NO FINAL: FLEXBOX NA VERTICAL */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* NOVO: Faz o conteúdo principal ocupar o máximo de espaço, empurrando o footer para baixo */
+        main {
+            flex-grow: 1; 
+        }
+
+        /* 1. ESTILOS DO HEADER/NAVBAR (FUNDO AZUL) */
+        .navbar {
+            background-color: var(--azul); 
+            box-shadow: var(--shadow-sm);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem; /* Ajustado para deixar a barra mais fina */
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand img.logo-nav {
+            max-width: 35px;
+        }
+        
+        /* Garante que os ícones fiquem com a cor padrão */
+        .navbar .nav-icon {
+            color: white;
+            font-size: 1.7rem;
+            transition: color 0.2s ease;
+        }
+        
+        .navbar .nav-icon:hover {
+            color: var(--rosa);
+        }
+
+        /* Estilos desnecessários removidos, pois a navbar agora é simples */
+
+        /* 2. ESTILOS DO MAIN/CATÁLOGO */
+        .container-main {
+            padding-top: 30px;
+        }
+
+        /* Estilo para a barra de filtros */
+        .filter-bar {
+            padding: var(--spacing-sm);
+            border-bottom: 2px solid var(--rosa-claro);
+            color: var(--rosa);
+            font-weight: 600;
+        }
+
+        .filter-bar a {
+            color: var(--rosa);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.2s ease;
+        }
+
+        .filter-bar a:hover {
+            text-decoration: underline;
+            color: var(--azul);
+        }
+
+        /* Estilo para os itens da lista de produtos */
+        .list-group-item {
+            border-radius: 12px;
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid var(--rosa-claro); 
+            box-shadow: var(--shadow-sm);
+            background-color: var(--branco-gelo);
+            color: var(--text-default); /* Garante que o texto seja escuro */
+        }
+        .list-group-item small {
+            color: #6c757d !important; 
+        }
+
+        /* 3. BOTÃO CUSTOMIZADO (btn-sorvetrix) */
+        .btn-sorvetrix {
+            background-color: var(--rosa); 
+            color: var(--text-light); 
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-sorvetrix:hover {
+            background-color: #e675b6; 
+            color: var(--text-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* 4. FOOTER (RODAPÉ AZUL - Não Fixo) */
+        .site-footer {
+            width: 100%;
+            background-color: var(--azul);
+            color: var(--text-default);
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            margin-top: var(--spacing-md);
+        }
+
+        .site-footer small {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* 5. ESTILOS PARA LAYOUT (BANNER E CARDS) */
+        .main-banner {
+            background-color: var(--rosa);
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--branco-gelo);
+            font-weight: 700;
+            font-size: 2rem;
+            border-radius: 12px;
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .highlight-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            flex-wrap: wrap; 
+        }
+
+        .highlight-card-item {
+            flex: 1 1 30%; 
+            background-color: var(--rosa-claro); 
+            min-height: 150px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding: var(--spacing-sm);
+            box-shadow: var(--shadow-sm);
+            color: var(--rosa);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            .highlight-card-item {
+                flex-basis: 100%; 
+                margin-bottom: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="logo.png" alt="SorveTrix" class="logo-nav me-2">
+                <span class="fw-bold">SorveTrix</span>
+            </a>
+
+            <div class="ms-auto d-flex align-items-center">
+                <a class="nav-link" href="index.html">
+                    <i class="bi bi-house-fill nav-icon me-3"></i>
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="bi bi-cart-fill nav-icon"></i>
+                </a>
+            </div>
+            
+            </div>
+    </nav>
+
+    <main class="container container-main">
+        
+        <div class="main-banner">
+            <span class="text-uppercase">BANNER / DESTAQUE</span>
+        </div>
+
+        <div class="highlight-cards">
+            <div class="highlight-card-item">
+                <p class="m-0">Valor R$</p>
+            </div>
+            <div class="highlight-card-item">
+                <p class="m-0">Valor R$</p>
+            </div>
+            <div class="highlight-card-item">
+                <p class="m-0">Valor R$</p>
+            </div>
+        </div>
+
+        <div class="filter-bar mb-4 mt-5 d-flex justify-content-between align-items-center">
+            <strong>Filtro :</strong>
+            <div>
+                <a href="#" class="me-3">Sabores</a>
+                <a href="#">Categorias</a>
+            </div>
+        </div>
+
+        <div class="list-group">
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="img/sorvete1.png" width="56" height="56" class="me-3 rounded" alt="Sorvete Chocolate">
+                    <div>
+                        <div class="fw-semibold">Sorvete Chocolate</div>
+                        <small class="text-muted">Delicioso sabor artesanal</small>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <div class="mb-2">R$ 10,00</div>
+                    <button class="btn btn-sorvetrix">Adicionar ao carrinho</button>
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="img/sorvete2.png" width="56" height="56" class="me-3 rounded" alt="Sorvete Morango">
+                    <div>
+                        <div class="fw-semibold">Sorvete Morango</div>
+                        <small class="text-muted">Feito com morangos frescos</small>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <div class="mb-2">R$ 12,00</div>
+                    <button class="btn btn-sorvetrix">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            </div>
+
+    </main>
+    
+    <footer class="site-footer">
+        <div class="container">
+            <small>Contato / Redes Sociais • © SorveTrix</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
