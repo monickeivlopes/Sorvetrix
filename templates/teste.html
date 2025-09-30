@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sorvetrix — Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo"><img src="logo.png" alt="imagem"></div>
+      <div>
+        <div style="font-weight:800;font-size:18px;color:var(--brown)">Sorvetrix</div>
+        <div style="font-size:12px;color:rgba(107,63,63,0.7)">Sistema de Gerenciamento — mockups</div>
+      </div>
+    </div>
+
+    <nav id="nav">
+      <button data-screen="dashboard">Dashboard</button>
+      <button data-screen="stock">Estoque</button>
+      <button data-screen="flavors">Sabores</button>
+      <button data-screen="orders">Pedidos</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LOGIN (reference) -->
+    <section id="login" class="screen show">
+      <div class="drip" style="top:-20px"></div>
+      <div class="layout" style="height:100%">
+        <div class="left card" style="flex:1;align-items:center;justify-content:center;">
+          <div style="text-align:center">
+            <div style="font-size:42px;font-weight:800;color:var(--pink-strong)">Bem-vindo(a)!</div>
+            <p style="color:rgba(107,63,63,0.7);max-width:420px;margin:12px auto">Gerencie estoque, pedidos e relatórios da sua sorveteria com carinho. Faça login para continuar.</p>
+            <div style="margin-top:18px">
+              <button class="btn" onclick="switchTo('dashboard')">Entrar — Ver Dashboard</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="right card" style="flex:1;display:flex;align-items:center;justify-content:center">
+          <div style="width:100%;max-width:380px">
+            <div style="font-weight:800;font-size:32px;color:var(--brown);margin-bottom:12px">Entrar</div>
+            <label>E-mail</label>
+            <input placeholder="seu@email.com" />
+            <label style="margin-top:10px">Senha</label>
+            <input type="password" placeholder="••••••••" />
+            <div style="display:flex;gap:10px;margin-top:18px">
+              <button class="btn" style="flex:1">Entrar</button>
+              <button class="ghost" style="flex:1">Esqueci</button>
+            </div>
+            <div style="margin-top:12px;text-align:center;color:rgba(107,63,63,0.6)">Feito com carinho e açúcar ♡</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="register" class="screen">
+      <div class="drip"></div>
+      <div class="grid">
+        <div class="card" style="padding:26px">
+          <h2 style="margin:0 0 10px 0;color:var(--brown)">Cadastrar Usuário</h2>
+          <p style="color:rgba(107,63,63,0.7)">Adicione funcionários e defina permissões.</p>
+
+          <div style="margin-top:12px">
+            <label>Nome</label>
+            <input placeholder="Maria da Silva" />
+            <label style="margin-top:8px">E-mail</label>
+            <input placeholder="maria@exemplo.com" />
+            <label style="margin-top:8px">Senha</label>
+            <input type="password" placeholder="••••••" />
+            <label style="margin-top:8px">Cargo</label>
+            <select>
+              <option>Atendente</option>
+              <option>Administrador</option>
+              <option>Gerente</option>
+            </select>
+
+            <div style="margin-top:14px;display:flex;gap:10px">
+              <button class="btn">Cadastrar com carinho 🍦</button>
+              <button class="ghost" onclick="switchTo('login')">Voltar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview card">
+          <div style="font-size:18px;font-weight:800;color:var(--pink-strong)">Preview da Marca</div>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
+            <div style="width:72px;height:72px;border-radius:12px;background:linear-gradient(180deg,var(--pink),var(--pink-strong));display:flex;align-items:center;justify-content:center;color:white;font-weight:900">S</div>
+            <div>
+              <div style="font-weight:700">Sorvetrix - Filial: Central</div>
+              <div style="font-size:13px;color:rgba(107,63,63,0.6)">Rua das Flores, 123 — Tel (84) 9xxxx-xxxx</div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;width:100%">
+            <div style="display:flex;gap:8px">
+              <div class="flavor-card" style="flex:1">
+                <div class="flavor-img">🍓</div>
+                <div style="margin-top:8px">Morango</div>
+              </div>
+              <div class="flavor-card" style="flex:1">
+                <div class="flavor-img">🍫</div>
+                <div style="margin-top:8px">Chocolate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="screen">
+      <div class="drip"></div>
+      <div class="grid">
+        <aside class="card sidemenu">
+          <div style="font-weight:800;font-size:18px;color:var(--brown)">Painel</div>
+          <button onclick="switchTo('dashboard')">Visão Geral</button>
+          <button onclick="switchTo('stock')">Estoque</button>
+          <button onclick="switchTo('orders')">Pedidos</button>
+          <button onclick="switchTo('flavors')">Sabores</button>
+
+          <div style="margin-top:auto">
+            <div style="font-size:12px;color:rgba(107,63,63,0.6)">Conta: admin@sorvetrix.com</div>
+            <div style="font-weight:700;color:var(--pink-strong);margin-top:8px">Sair</div>
+          </div>
+        </aside>
+
+        <div class="card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <h2 style="margin:0;color:var(--brown)">Visão Geral</h2>
+              <div style="color:rgba(107,63,63,0.6)">Resumo em tempo real</div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div class="metric card" style="min-width:120px">
+                <div style="font-size:12px;color:rgba(107,63,63,0.6)">Vendas Hoje</div>
+                <div class="big" style="color:var(--pink-strong)">152</div>
+              </div>
+              <div class="metric card" style="min-width:120px">
+                <div style="font-size:12px;color:rgba(107,63,63,0.6)">Estoque baixo</div>
+                <div class="big" style="color:#c47f00">5</div>
+              </div>
+              <div class="metric card" style="min-width:120px">
+                <div style="font-size:12px;color:rgba(107,63,63,0.6)">Pedidos em andamento</div>
+                <div class="big" style="color:#2d7a66">12</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:22px;margin-top:22px;align-items:center">
+            <div style="flex:0 0 260px">
+              <div style="font-weight:700;color:var(--brown);margin-bottom:8px">Vendas por sabor</div>
+              <div class="donut">Top</div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <div style="display:flex;gap:6px;align-items:center"><div style="width:12px;height:12px;border-radius:3px;background:#ff9fb0"></div> Morango</div>
+                <div style="display:flex;gap:6px;align-items:center"><div style="width:12px;height:12px;border-radius:3px;background:#ffd27f"></div> Chocolate</div>
+                <div style="display:flex;gap:6px;align-items:center"><div style="width:12px;height:12px;border-radius:3px;background:#b8e7c8"></div> Pistache</div>
+              </div>
+            </div>
+
+            <div style="flex:1">
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                <div class="card">Relatórios rápidos<br><strong>Exportar CSV/PDF</strong></div>
+                <div class="card">Fluxo de caixa<br><strong>R$ 4.320,00</strong></div>
+                <div class="card">Promoções ativas<br><strong>2</strong></div>
+                <div class="card">Avaliações<br><strong>4.8/5</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STOCK -->
+    <section id="stock" class="screen">
+      <div class="drip"></div>
+      <div class="card" style="height:100%;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0;color:var(--brown)">Gerenciamento de Estoque</h2>
+            <div style="color:rgba(107,63,63,0.6)">Controle de insumos e níveis</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn" onclick="addItem()">+ Adicionar Produto</button>
+            <button class="ghost" onclick="switchTo('dashboard')">Voltar</button>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;flex:1;overflow:auto">
+          <div class="table">
+            <div class="item"><div><strong>Morango</strong><div style="font-size:13px;color:rgba(107,63,63,0.6)">Fruta - kg</div></div><div class="qty green">120 kg</div></div>
+            <div class="item"><div><strong>Leite</strong><div style="font-size:13px;color:rgba(107,63,63,0.6)">Líquido - L</div></div><div class="qty green">45 L</div></div>
+            <div class="item"><div><strong>Embalagens</strong><div style="font-size:13px;color:rgba(107,63,63,0.6)">Copos/colheres</div></div><div class="qty green">210 un</div></div>
+            <div class="item"><div><strong>Banana</strong><div style="font-size:13px;color:rgba(107,63,63,0.6)">Fruta - kg</div></div><div class="qty warn">8 kg</div></div>
+            <div class="item"><div><strong>Chocolate em pó</strong><div style="font-size:13px;color:rgba(107,63,63,0.6)">Ingrediente</div></div><div class="qty low">2 kg</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLAVORS -->
+    <section id="flavors" class="screen">
+      <div class="drip"></div>
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0;color:var(--brown)">Cadastro de Sabores</h2>
+            <div style="color:rgba(107,63,63,0.6)">Adicione, edite e gerencie seus sabores.</div>
+          </div>
+          <div>
+            <button class="btn" onclick="newFlavor()">+ Novo Sabor</button>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;flex:1;overflow:auto">
+          <div class="flavor-list">
+            <div class="flavor-card card">
+              <div class="flavor-img">🍓</div>
+              <div style="margin-top:8px">Morango</div>
+            </div>
+            <div class="flavor-card card">
+              <div class="flavor-img">🍫</div>
+              <div style="margin-top:8px">Chocolate</div>
+            </div>
+            <div class="flavor-card card">
+              <div class="flavor-img">🥥</div>
+              <div style="margin-top:8px">Coco</div>
+            </div>
+            <div class="flavor-card card">
+              <div class="flavor-img">🍋</div>
+              <div style="margin-top:8px">Limão</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section id="orders" class="screen">
+      <div class="drip"></div>
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0;color:var(--brown)">Pedidos & Delivery</h2>
+            <div style="color:rgba(107,63,63,0.6)">Acompanhe status e endereços</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="ghost">Todos</button>
+            <button class="ghost">Em preparo</button>
+            <button class="ghost">Saiu para entrega</button>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;flex:1;overflow:auto">
+          <div class="orders-list">
+            <div class="order card">
+              <div>
+                <div style="font-weight:700">#1008 — Morango (casquinha)</div>
+                <div style="font-size:13px;color:rgba(107,63,63,0.6)">Cliente: João — Entrega: Rua A, 123</div>
+              </div>
+              <div class="tags">
+                <div style="font-weight:800;color:var(--pink-strong)">Em preparo</div>
+                <button class="btn" style="padding:8px 10px;font-size:13px" onclick="alert('Detalhes')">Ver</button>
+              </div>
+            </div>
+
+            <div class="order card">
+              <div>
+                <div style="font-weight:700">#1094 — Milkshake Chocolate</div>
+                <div style="font-size:13px;color:rgba(107,63,63,0.6)">Cliente: Ana — Retirada</div>
+              </div>
+              <div class="tags">
+                <div style="font-weight:800;color:#2d7a66">Pronto</div>
+                <button class="btn" style="padding:8px 10px;font-size:13px">Ver</button>
+              </div>
+            </div>
+
+            <div class="order card">
+              <div>
+                <div style="font-weight:700">#1102 — Pote Pistache 1L</div>
+                <div style="font-size:13px;color:rgba(107,63,63,0.6)">Cliente: Delivery — Rua B, 45</div>
+              </div>
+              <div class="tags">
+                <div style="font-weight:800;color:#c47f00">Saiu para entrega</div>
+                <button class="btn" style="padding:8px 10px;font-size:13px">Rastrear</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Navigation
+  const nav = document.getElementById('nav');
+  nav.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-screen]');
+    if(!btn) return;
+    const id = btn.getAttribute('data-screen');
+    switchTo(id);
+  });
+
+  function switchTo(id){
+    document.querySelectorAll('.screen').forEach(s=> s.classList.remove('show'));
+    document.getElementById(id).classList.add('show');
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    const btn = document.querySelector('nav button[data-screen="'+id+'"]');
+    if(btn) btn.classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  // small interactions placeholders
+  function addItem(){
+    alert('Abrir modal de adição (mockup) — aqui você pode conectar com formulário real.');
+  }
+  function newFlavor(){
+    alert('Abrir formulário para novo sabor (mockup).');
+  }
+</script>
+</body>
+</html>

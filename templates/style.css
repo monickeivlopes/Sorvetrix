@@ -1,178 +1,184 @@
-/* SUAS VARIÁVEIS CSS ORIGINAIS */
-:root {
-  --rosa: #f38fc5;
-  --rosa-claro: #ffc1da;
-  --bege: #fdefdb;
-  --azul: #8edbe6;
-  --amarelo: #ffcd5c;
-  --branco-gelo: #fff4e1;
-  
-  /* Variáveis para espaçamentos e sombras para consistência */
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 3rem;
-  --spacing-xl: 4rem;
-  
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
-  
-  /* Transições padrão para interatividade suave */
-  --transition-base: all 0.2s ease;
-  --transition-hover: transform 0.18s ease, background 0.18s ease;
+:root{
+  --mint:#c2ffd9;
+  --yellow:#ffcd5c;
+  --blue:#8edbe6;
+  --pink:#f38fc5;
+  --cream:#fdefdb;
+  --pink-light:#ffc1da;
+  --brown:#7b4b36;
+  --card:#fffdef;
+  --accent:#ffe6e9;
 }
 
-/* ESTILOS GERAIS */
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+html,body{
+  height:100%;
+  margin:0;
+  font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto;
+  background:linear-gradient(180deg,#fdefdb 0%, #ffc1da 100%);
+  color:#6b3f3f;
 }
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+/* waffle texture */
+body::before{
+  content:""; 
+  position:fixed; 
+  inset:0; 
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(0,0,0,0.04) 0 2%, transparent 3%),
+    radial-gradient(circle at 70% 50%, rgba(0,0,0,0.03) 0 2%, transparent 3%),
+    linear-gradient(135deg, rgba(0,0,0,0.02) 12px, transparent 12px),
+    linear-gradient(45deg, rgba(0,0,0,0.02) 12px, transparent 12px);
+  background-size: 60px 60px, 60px 60px, 24px 24px, 24px 24px;
+  mix-blend-mode:multiply; 
+  opacity:0.12;
 }
 
-body {
-    font-family: "Poppins", sans-serif;
-    background-color: var(--azul); 
-    min-height: 100vh;
-    display: flex; /* Para centralizar o login-wrapper */
-    justify-content: center;
-    align-items: center;
-    padding: var(--spacing-sm);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* app shell */
+.app {width:100%;height:100vh;display:flex;flex-direction:column;align-items:stretch}
+header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:16px 28px}
+.brand{display:flex;align-items:center;gap:14px}
+/* logo com imagem */
+.logo{
+  width:72px; /* maior que antes */
+  height:72px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:0 8px 18px rgba(0,0,0,0.08);
+}
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:12px;
 }
 
-/* 1. CONTAINER GERAL (O CARD GRANDE) */
-.login-wrapper {
-    display: flex;
-    background-color: #fff; /* O fundo branco dentro da sombra */
-    border-radius: 16px;
-    box-shadow: var(--shadow-lg);
-    overflow: hidden; 
-    max-width: 900px; /* Limite de largura para desktop */
-    width: 100%;
-    min-height: 500px; 
+nav{display:flex;gap:12px}
+nav button{
+  background:transparent;
+  border:2px solid rgba(123,75,54,0.06);
+  padding:8px 12px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer
+}
+nav button.active{
+  background:linear-gradient(180deg,var(--pink),var(--pink-light));
+  color:#fff;
+  border:none;
+  box-shadow:0 8px 18px rgba(243,143,197,0.22);
 }
 
-/* 2. LADO ESQUERDO (AZUL) */
-.login-left-side {
-    background-color: var(--azul); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: var(--spacing-md);
-    /* Oculto em mobile, aparecerá em telas maiores que md */
-    display: none; 
+main{flex:1;display:flex;align-items:stretch;justify-content:center;padding:24px;gap:22px}
+
+/* each screen full viewport */
+.screen{
+  width:100%; max-width:1200px; height:calc(100vh - 120px);
+  background:linear-gradient(180deg,#fdefdb,#ffe6e9);
+  border-radius:18px; 
+  box-shadow:0 14px 40px rgba(0,0,0,0.08); 
+  padding:28px; 
+  overflow:auto;
+  display:none; 
+  position:relative;
+}
+.screen.show{display:block}
+
+.col{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:18px;align-items:center}
+
+/* common card */
+.card{
+  background:#fffdef;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
 }
 
-/* 3. LADO DIREITO (ROSA) */
-.login-right-side {
-    background-color: var(--rosa); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: var(--spacing-md);
-    flex-grow: 1; /* Ocupa 100% em mobile */
+/* forms */
+label{font-weight:600;color:var(--brown)}
+input, select, textarea{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(123,75,54,0.06);
+  background:#fff;
+  font-size:15px;
+}
+.btn{
+  display:inline-block;
+  padding:12px 18px;
+  border-radius:12px;
+  background:linear-gradient(180deg,var(--pink),var(--pink-light));
+  color:white;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(243,143,197,0.18);
+}
+.ghost{
+  background:transparent;
+  border:1px solid rgba(123,75,54,0.06);
+  color:var(--brown);
 }
 
-/* Media Query para a Divisão (Split) */
-@media (min-width: 768px) {
-    .login-left-side {
-        display: flex;
-        flex: 1; /* Ocupa 50% */
-    }
-    .login-right-side {
-        flex: 1; /* Ocupa 50% */
-    }
+/* decorative chocolate drip top */
+.drip{
+  position:absolute;
+  left:0;right:0;
+  height:40px;
+  top:-12px;
+  background:linear-gradient(180deg,#7b4b36,#653927);
+  border-top-left-radius:18px;
+  border-top-right-radius:18px;
+  clip-path:path('M0,30 Q50,0 80,30 T160,30 T240,30 T320,30 H100% V0 H0 Z');
+  opacity:1;
 }
 
-/* ÍCONE DE USUÁRIO (Círculo Branco) */
-.user-icon {
-    font-size: 4rem; 
-    color: var(--branco-gelo); 
-    border: 2px solid var(--branco-gelo);
-    border-radius: 50%;
-    padding: var(--spacing-xs);
-    margin-bottom: var(--spacing-md);
-    display: inline-flex; 
-    justify-content: center;
-    align-items: center;
-}
+/* specific screens */
+/* Login-like (hero) */
+#login .layout{display:flex;gap:28px;height:100%}
+#login .left{flex:1;display:flex;align-items:center;justify-content:center}
+#login .right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
 
-.user-icon svg {
-    width: 1em; 
-    height: 1em;
-}
+/* Register */
+#register .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;height:100%}
+#register .preview{background:linear-gradient(180deg,#fff9f9,#fff4f6);border-radius:12px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
 
-/* INPUTS (Transparentes com Borda Branca Gelo) */
-.form-control-custom {
-    background-color: transparent; 
-    border: 2px solid var(--branco-gelo); 
-    color: var(--branco-gelo); 
-    border-radius: 30px; 
-    padding: 0.75rem 1.25rem;
-    margin-bottom: var(--spacing-sm);
-    /* Garante que o input ocupe a largura total */
-    width: 100%;
-    /* Estilos do Bootstrap que precisamos garantir que não anulem a transparência */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
+/* Dashboard */
+#dashboard .grid{display:grid;grid-template-columns:320px 1fr;gap:18px;height:100%}
+#dashboard .sidemenu{display:flex;flex-direction:column;gap:10px;padding:10px}
+#dashboard .sidemenu button{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;border:none;background:transparent;cursor:pointer}
+.metric{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:12px;align-items:flex-start}
+.metric.big{font-size:28px;font-weight:800}
+/* donut chart placeholder */
+.donut{width:220px;height:220px;border-radius:50%;background:conic-gradient(var(--pink) 0 36%, var(--yellow) 36% 62%, var(--mint) 62% 100%);display:flex;align-items:center;justify-content:center;font-weight:700;color:#703f3f}
 
-.form-control-custom::placeholder {
-    color: var(--branco-gelo); 
-    opacity: 0.7;
-}
+/* Stock */
+#stock .table{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fffdef);border:1px solid rgba(123,75,54,0.03)}
+.qty.green{color:green;font-weight:700}
+.qty.warn{color:#c47f00;font-weight:700}
+.qty.low{color:#c72f2f;font-weight:800}
 
-/* FOCO (Amarelo) */
-.form-control-custom:focus {
-    background-color: rgb(255, 255, 255); 
-    border-color: var(--amarelo); 
-    /* Adicionando o outline para acessibilidade e efeito visual */
-    box-shadow: 0 0 0 0.25rem rgb(255, 255, 255); 
-    color: var(--branco-gelo);
-}
+/* Flavors */
+.flavor-list{display:flex;flex-wrap:wrap;gap:12px}
+.flavor-card{width:170px;height:120px;border-radius:12px;padding:12px;background:linear-gradient(180deg,#fff,#fffdef);display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:700}
+.flavor-img{width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--yellow),var(--pink));display:flex;align-items:center;justify-content:center;color:white;font-weight:900}
 
-/* LINKS (Branco Gelo) */
-.login-form-link {
-    color: var(--branco-gelo); 
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: var(--transition-base);
-}
+/* Orders */
+.orders-list{display:flex;flex-direction:column;gap:10px}
+.order{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:#fff}
+.tags{display:flex;gap:8px}
 
-.login-form-link:hover {
-    color: var(--amarelo); 
-    text-decoration: underline;
+/* small screens adjustments */
+@media (max-width:900px){
+  header{padding:10px}
+  main{padding:12px}
+  .grid, .layout{flex-direction:column}
+  .drip{height:28px}
 }
-
-/* BOTÃO LOGIN (Amarelo) */
-.btn-login-custom {
-    background-color: var(--amarelo);
-    color: white;
-    border-radius: 30px;
-    font-weight: 700;
-    padding: 0.75rem 2rem;
-    border: none;
-    transition: var(--transition-hover);
-    box-shadow: var(--shadow-sm);
-}
-
-.btn-login-custom:hover {
-    background-color: #ffde7a; 
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-    color: white;
-}
-.btn-login-custom:focus {
-    outline: 2px solid var(--amarelo);
-    outline-offset: 3px;
-    box-shadow: var(--shadow-md);
-}
-
