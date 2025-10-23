@@ -1,0 +1,189 @@
+:root{
+  --mint:#c2ffd9;
+  --yellow:#ffcd5c;
+  --blue:#8edbe6;
+  --pink:#f38fc5;
+  --cream:#fdefdb;
+  --pink-light:#ffc1da;
+  --brown:#7b4b36;
+  --card:#fffdef;
+  --accent:#ffe6e9;
+  --pink-strong:#f90989;
+}
+
+*{box-sizing:border-box}
+html,body{
+  display: flex;
+  justify-content: center;
+  
+  margin:0;
+  font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto;
+  background:linear-gradient(180deg,#fdefdb 0%, #ffc1da 100%);
+  color:#6b3f3f;
+}
+
+/* waffle texture */
+body::before{
+  content:""; 
+  position:fixed; 
+  inset:0; 
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(0,0,0,0.04) 0 2%, transparent 3%),
+    radial-gradient(circle at 70% 50%, rgba(0,0,0,0.03) 0 2%, transparent 3%),
+    linear-gradient(135deg, rgba(0,0,0,0.02) 12px, transparent 12px),
+    linear-gradient(45deg, rgba(0,0,0,0.02) 12px, transparent 12px);
+  background-size: 60px 60px, 60px 60px, 24px 24px, 24px 24px;
+  mix-blend-mode:multiply; 
+  opacity:0.12;
+}
+
+/* app shell */
+.app {width:100%;height:100vh;display:flex;flex-direction:column;align-items:stretch}
+header{height:10%;display:flex;align-items:center;justify-content:space-between;padding:16px 28px; margin-bottom: 20px;}
+.brand{display:flex;align-items:center;gap:14px}
+/* logo com imagem */
+.logo{
+  width:72px; /* maior que antes */
+  height:72px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:0 8px 18px rgba(0,0,0,0.08);
+}
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+nav{display:flex;gap:12px}
+nav button{
+  background:transparent;
+  border:2px solid rgba(123,75,54,0.06);
+  padding:8px 12px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  color: var(--brown);
+}
+nav button.active{
+  background:linear-gradient(180deg,var(--pink),var(--pink-light));
+  color:#fff;
+  border:none;
+  box-shadow:0 8px 18px rgba(243,143,197,0.22);
+}
+
+main{flex:1;display:flex;align-items:stretch;justify-content:center;padding:24px;gap:22px; flex-direction: column;}
+
+/* each screen full viewport */
+.screen{
+  width:100%; max-width:1200px; height:calc(100vh - 120px);
+  background:linear-gradient(180deg,#fdefdb,#ffe6e9);
+  border-radius:18px; 
+  box-shadow:0 14px 40px rgba(0,0,0,0.08); 
+  padding:28px; 
+  overflow:auto;
+  
+  position:relative;
+}
+.screen.show{display:block}
+
+.col{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:18px;align-items:center}
+
+/* common card */
+.card{
+  background:#fffdef;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+}
+
+/* forms */
+label{font-weight:600;color:var(--brown)}
+input, select, textarea{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(123,75,54,0.06);
+  background:#fff;
+  font-size:15px;
+  color: var(--brown);
+}
+.btn{
+  display:inline-block;
+  padding:12px 18px;
+  border-radius:12px;
+  background:linear-gradient(180deg,var(--pink),var(--pink-light));
+  color:white;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(243,143,197,0.18);
+}
+.ghost{
+  background:transparent;
+  border:1px solid rgba(123,75,54,0.06);
+  color:var(--brown);
+}
+
+/* decorative chocolate drip top */
+.drip{
+  position:absolute;
+  left:0;right:0;
+  height:40px;
+  top:-12px;
+  background:linear-gradient(180deg,#7b4b36,#653927);
+  border-top-left-radius:18px;
+  border-top-right-radius:18px;
+  clip-path:path('M0,30 Q50,0 80,30 T160,30 T240,30 T320,30 H100% V0 H0 Z');
+  opacity:1;
+}
+
+/* specific screens */
+/* Login-like (hero) */
+#login .layout{display:flex;gap:28px;height:100%}
+#login .left{flex:1;display:flex;align-items:center;justify-content:center}
+#login .right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+
+/* Register */
+#register .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;height:100%}
+#register .preview{background:linear-gradient(180deg,#fff9f9,#fff4f6);border-radius:12px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+
+/* Dashboard */
+#dashboard .grid{display:grid;grid-template-columns:320px 1fr;gap:18px;height:100%}
+#dashboard .sidemenu{display:flex;flex-direction:column;gap:10px;padding:10px}
+#dashboard .sidemenu button{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;border:none;background:transparent;cursor:pointer}
+.metric{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:12px;align-items:flex-start}
+.metric.big{font-size:28px;font-weight:800}
+/* donut chart placeholder */
+.donut{width:220px;height:220px;border-radius:50%;background:conic-gradient(var(--pink) 0 36%, var(--yellow) 36% 62%, var(--mint) 62% 100%);display:flex;align-items:center;justify-content:center;font-weight:700;color:#703f3f}
+
+/* Stock */
+#stock .table{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fffdef);border:1px solid rgba(123,75,54,0.03)}
+.qty.green{color:green;font-weight:700}
+.qty.warn{color:#c47f00;font-weight:700}
+.qty.low{color:#c72f2f;font-weight:800}
+
+/* Flavors */
+.flavor-list{display:flex;flex-wrap:wrap;gap:12px}
+.flavor-card{width:170px;height:120px;border-radius:12px;padding:12px;background:linear-gradient(180deg,#fff,#fffdef);display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:700}
+.flavor-img{width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--yellow),var(--pink));display:flex;align-items:center;justify-content:center;color:white;font-weight:900}
+
+/* Orders */
+.orders-list{display:flex;flex-direction:column;gap:10px}
+.order{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:#fff}
+.tags{display:flex;gap:8px}
+
+/* small screens adjustments */
+@media (max-width:900px){
+  header{padding:10px}
+  main{padding:12px}
+  .grid, .layout{flex-direction:column}
+  .drip{height:28px}
+}
