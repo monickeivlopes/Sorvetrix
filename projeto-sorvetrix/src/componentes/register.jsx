@@ -1,9 +1,44 @@
 import "../style.css";
 import Header from "./header";
+import { useState } from "react";
 
 export default function Register() {
-  const switchTo = (screen) => {
-    console.log(`Trocar para tela: ${screen}`);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [cargo, setCargo] = useState("Atendente");
+  const [status, setStatus] = useState(""); // mensagem de feedback
+
+  const handleRegister = async () => {
+    setStatus("Cadastrando... 🍦");
+
+    const userData = { nome, email, senha, cargo };
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus("✅ Usuário cadastrado com sucesso!");
+        // Limpa o formulário
+        setNome("");
+        setEmail("");
+        setSenha("");
+        setCargo("Atendente");
+        // Redireciona para login depois de 1.5s
+        setTimeout(() => (window.location.href = "/login"), 1500);
+      } else {
+        setStatus("❌ Erro: " + (data.detail || "Não foi possível cadastrar"));
+      }
+    } catch (error) {
+      setStatus("❌ Erro de conexão com o servidor.");
+      console.error(error);
+    }
   };
 
   return (
@@ -22,27 +57,62 @@ export default function Register() {
 
             <div style={{ marginTop: "12px" }}>
               <label>Nome</label>
-              <input placeholder="Maria da Silva" />
+              <input
+                placeholder="Maria da Silva"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+              />
+
               <label style={{ marginTop: "8px" }}>E-mail</label>
-              <input placeholder="maria@exemplo.com" />
+              <input
+                placeholder="maria@exemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
               <label style={{ marginTop: "8px" }}>Senha</label>
-              <input type="password" placeholder="••••••" />
+              <input
+                type="password"
+                placeholder="••••••"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
+
               <label style={{ marginTop: "8px" }}>Cargo</label>
-              <select>
+              <select
+                value={cargo}
+                onChange={(e) => setCargo(e.target.value)}
+              >
                 <option>Atendente</option>
                 <option>Administrador</option>
                 <option>Gerente</option>
               </select>
 
               <div style={{ marginTop: "14px", display: "flex", gap: "10px" }}>
-                <button className="btn">Cadastrar com carinho 🍦</button>
-                <button className="ghost" onClick={() => switchTo("login")}>
-                 <a href="/login">Voltar</a>
+                <button className="btn" onClick={handleRegister}>
+                  Cadastrar com carinho 🍦
+                </button>
+                <button className="ghost">
+                  <a href="/login">Voltar</a>
                 </button>
               </div>
+
+              {/* Mensagem de feedback */}
+              {status && (
+                <p
+                  style={{
+                    marginTop: "10px",
+                    fontWeight: "600",
+                    color: "var(--brown)",
+                  }}
+                >
+                  {status}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* Preview da marca */}
           <div className="preview card">
             <div
               style={{
@@ -89,19 +159,6 @@ export default function Register() {
                   }}
                 >
                   Rua das Flores, 123 — Tel (84) 9xxxx-xxxx
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: "18px", width: "100%" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <div className="flavor-card" style={{ flex: 1 }}>
-                  <div className="flavor-img">🍓</div>
-                  <div style={{ marginTop: "8px" }}>Morango</div>
-                </div>
-                <div className="flavor-card" style={{ flex: 1 }}>
-                  <div className="flavor-img">🍫</div>
-                  <div style={{ marginTop: "8px" }}>Chocolate</div>
                 </div>
               </div>
             </div>
