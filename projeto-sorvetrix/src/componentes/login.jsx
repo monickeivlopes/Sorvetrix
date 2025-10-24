@@ -29,8 +29,8 @@ export default function Login() {
       <Header />
       <section id="login" className="screen show">
         <div className="layout" style={{ height: "100%" }}>
-          <div className="right card" style={{ display: "flex", justifyContent: "center" }}>
-            <div style={{ width: "100%", maxWidth: "380px" }}>
+          <div className="right card" style={{ display: "flex", justifyContent: "center", alignItems:"center"}}>
+            <div style={{ width: "100%", maxWidth: "380px", display: "flex", justifyContent: "center", alignItems:"left",flexDirection: "column",}}>
               <h2>Entrar</h2>
               <label>E-mail</label>
               <input value={email} onChange={(e) => setEmail(e.target.value)} />
