@@ -1,20 +1,49 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Header from "./componentes/header";
+import Dashboard from "./componentes/index";
+import Orders from "./componentes/orders";
+import Stocks from "./componentes/pedidos";
+import Flavors from "./componentes/flavors";
 import Login from "./componentes/login";
 import Register from "./componentes/register";
-import Dashboard from "./componentes/";
-import Orders from "./componentes/orders";
 
-function App() {
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  // Atualiza automaticamente se o token mudar (ex: login ou logout)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   return (
     <Router>
+      {isLoggedIn && <Header />}
       <Routes>
+        {/* Rotas públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/orders" element={<Orders />} />
+
+        {/* Rotas privadas */}
+        {isLoggedIn ? (
+          <>
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/estoque" element={<Stocks />} />
+            <Route path="/sabores" element={<Flavors />} />
+            <Route path="/pedidos" element={<Orders />} />
+          </>
+        ) : (
+          <Route path="*" element={<Navigate to="/login" />} />
+        )}
       </Routes>
     </Router>
   );
 }
 
-export default App;
+
