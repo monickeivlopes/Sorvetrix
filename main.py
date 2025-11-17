@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String
+from pydantic import BaseModel,  Field
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-import datetime
+from typing import Optional
+import  datetime
+
 
 # python -m uvicorn main:app --reload
 
@@ -54,6 +56,57 @@ class UserLogin(BaseModel):
     email: str
     senha: str
 
+class Produto(Base):
+    __tablename__ = "produtos"
+    id = Column(Integer, primary_key=True, index=True)
+    marca = Column(String)
+    sabor = Column(String)
+    lote = Column(Integer)
+    validade = Column(DateTime)
+
+
+Base.metadata.create_all(bind=engine)
+
+class ProdutoSchema(BaseModel):
+    marca: str
+    sabor: str
+    lote: int
+    validade: datetime.date
+
+
+class Config:
+    orm_mode = True
+# SQLAlchemy model
+class Venda(Base):
+    __tablename__ = "vendas"
+    id = Column(Integer, primary_key=True, index=True)
+    item = Column(String(200), nullable=False)
+    cliente = Column(String(200), nullable=False)
+    endereco = Column(String(300), nullable=True)
+    status = Column(String(50), nullable=False, default="Em preparo")
+    created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+
+# Pydantic schemas
+class VendaCreate(BaseModel):
+    item: str
+    cliente: str
+    endereco: Optional[str] = None
+    status: Optional[str] = Field(default="Em preparo")
+
+class VendaRead(BaseModel):
+    id: int
+    item: str
+    cliente: str
+    endereco: Optional[str] = None
+    status: str
+    created_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+
+Base.metadata.create_all(bind=engine)
+
  
 
 def get_db():
@@ -91,3 +144,72 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
     token = create_token(user.email)
     return {"access_token": token, "user": user.nome, "cargo": user.cargo}
+
+
+
+# Endpoints
+@app.post("/vendas", response_model=VendaRead)
+def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
+    v = Venda(
+        item=venda.item,
+        cliente=venda.cliente,
+        endereco=venda.endereco,
+        status=venda.status or "Em preparo",
+    )
+    db.add(v)
+    db.commit()
+    db.refresh(v)
+    return v
+
+@app.get("/vendas", response_model=list[VendaRead])
+def list_vendas(db: Session = Depends(get_db)):
+    vendas = db.query(Venda).order_by(Venda.created_at.desc()).all()
+    return vendas
+
+@app.get("/vendas/{venda_id}", response_model=VendaRead)
+def get_venda(venda_id: int, db: Session = Depends(get_db)):
+    v = db.query(Venda).filter(Venda.id == venda_id).first()
+    if not v:
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
+    return v
+
+@app.put("/vendas/{venda_id}", response_model=VendaRead)
+def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
+    v = db.query(Venda).filter(Venda.id == venda_id).first()
+    if not v:
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
+    # Atualiza apenas os campos permitidos
+    if "status" in payload:
+        v.status = payload["status"]
+    if "item" in payload:
+        v.item = payload["item"]
+    if "cliente" in payload:
+        v.cliente = payload["cliente"]
+    if "endereco" in payload:
+        v.endereco = payload["endereco"]
+    db.commit()
+    db.refresh(v)
+    return v
+
+@app.delete("/vendas/{venda_id}", status_code=204)
+def delete_venda(venda_id: int, db: Session = Depends(get_db)):
+    v = db.query(Venda).filter(Venda.id == venda_id).first()
+    if not v:
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
+    db.delete(v)
+    db.commit()
+    return None
+# --- FIM ---
+
+@app.post("/produtos")
+def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
+    novo = Produto(**produto.dict())
+    db.add(novo)
+    db.commit()
+    db.refresh(novo)
+    return novo
+
+
+@app.get("/produtos")
+def listar_produtos(db: Session = Depends(get_db)):
+    return db.query(Produto).all()

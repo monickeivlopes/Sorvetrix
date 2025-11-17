@@ -37,7 +37,7 @@ export default function Login() {
 
   return (
     <>
-      <Header />
+      
       <section id="login" className="screen show">
         <div className="layout" style={{ height: "100%" }}>
           <div className="right card" style={{ display: "flex", justifyContent: "center", alignItems:"center"}}>

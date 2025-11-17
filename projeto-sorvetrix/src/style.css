@@ -60,7 +60,8 @@ header{height:10%;display:flex;align-items:center;justify-content:space-between;
   border-radius:12px;
 }
 
-nav{display:flex;gap:12px}
+nav{display:flex;gap:12px;
+}
 nav button{
   background:transparent;
   border:2px solid rgba(123,75,54,0.06);
@@ -70,11 +71,16 @@ nav button{
   cursor:pointer;
   color: var(--brown);
 }
-nav button.active{
-  background:linear-gradient(180deg,var(--pink),var(--pink-light));
-  color:#fff;
+
+nav a{
+  color:linear-gradient(180deg,var(--pink),var(--pink-light));
+  font-weight: bolder;
   border:none;
-  box-shadow:0 8px 18px rgba(243,143,197,0.22);
+  text-decoration: none;
+}
+nav a:hover{
+  color: var(--pink-strong);
+  font-size: 110%;
 }
 
 main{flex:1;display:flex;align-items:stretch;justify-content:center;padding:24px;gap:22px; flex-direction: column;}
