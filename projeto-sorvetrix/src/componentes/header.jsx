@@ -1,7 +1,16 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import "../style.css";
 
 export default function Header() {
+  const navigate = useNavigate();
+  function handleLogout() {
+    
+    localStorage.removeItem("token");
+    localStorage.removeItem("cargo");
+    localStorage.removeItem("user");
+    navigate("/login");
+  }
   return (
     <header>
       <div className="brand">
@@ -55,6 +64,24 @@ export default function Header() {
         >
           Pedidos
         </NavLink>
+
+        <button
+          onClick={handleLogout}
+          className="logout-btn"
+          style={{
+            marginLeft: "20px",
+            padding: "6px 12px",
+            borderRadius: "6px",
+            background: "var(--brown)",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        >
+          Sair
+        </button>
+        
       </nav>
     </header>
   );

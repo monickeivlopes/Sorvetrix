@@ -8,6 +8,7 @@ import Flavors from "./componentes/flavors";
 import Login from "./componentes/login";
 import Register from "./componentes/register";
 
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
@@ -25,21 +26,21 @@ export default function App() {
     <Router>
       {isLoggedIn && <Header />}
       <Routes>
-        {/* Rotas públicas */}
+       
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* Rotas privadas */}
         {isLoggedIn ? (
           <>
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/estoque" element={<Stocks />} />
             <Route path="/sabores" element={<Flavors />} />
             <Route path="/pedidos" element={<Orders />} />
           </>
         ) : (
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to="/login" />} />
         )}
       </Routes>
     </Router>

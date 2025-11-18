@@ -9,8 +9,6 @@ from typing import Optional
 import  datetime
 
 
-# python -m uvicorn main:app --reload
-
 
 app = FastAPI()
 origins = ["http://localhost:5173"]  
@@ -32,7 +30,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "segredo_super_seguro"
 ALGORITHM = "HS256"
 
-# Modelos ================================================================
 
 class User(Base):
     __tablename__ = "users"
@@ -44,7 +41,7 @@ class User(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# Schemas Pydantic ========================================================
+
 
 class UserCreate(BaseModel):
     nome: str
@@ -76,7 +73,7 @@ class ProdutoSchema(BaseModel):
 
 class Config:
     orm_mode = True
-# SQLAlchemy model
+
 class Venda(Base):
     __tablename__ = "vendas"
     id = Column(Integer, primary_key=True, index=True)
@@ -86,7 +83,7 @@ class Venda(Base):
     status = Column(String(50), nullable=False, default="Em preparo")
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
 
-# Pydantic schemas
+
 class VendaCreate(BaseModel):
     item: str
     cliente: str
@@ -123,7 +120,7 @@ def create_token(email: str):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-# Rotas ========================================================================
+
 
 @app.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -147,7 +144,6 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
 
 
-# Endpoints
 @app.post("/vendas", response_model=VendaRead)
 def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
     v = Venda(
@@ -178,7 +174,7 @@ def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
     v = db.query(Venda).filter(Venda.id == venda_id).first()
     if not v:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
-    # Atualiza apenas os campos permitidos
+   
     if "status" in payload:
         v.status = payload["status"]
     if "item" in payload:
@@ -199,7 +195,7 @@ def delete_venda(venda_id: int, db: Session = Depends(get_db)):
     db.delete(v)
     db.commit()
     return None
-# --- FIM ---
+
 
 @app.post("/produtos")
 def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
