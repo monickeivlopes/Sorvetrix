@@ -52,20 +52,35 @@ export default function Flavors({ screen, switchTo }) {
       <div className="drip"></div>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        {/* Header */}
-        <div className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div
+          className="card"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "28px"
+          }}
+        >
           <div>
             <h2 style={{ margin: 0, color: "var(--brown)" }}>Cadastro de Produtos</h2>
             <div style={{ color: "rgba(107,63,63,0.6)" }}>
               Gerencie marca, sabor e validade dos produtos.
             </div>
           </div>
-          <button className="btn" onClick={() => setShowForm(true)}>+ Novo Produto</button>
+          <button className="btn" onClick={() => setShowForm(true)}>
+            + Novo Produto
+          </button>
         </div>
 
-        {/* Formulário de novo produto */}
         {showForm && (
-          <div className="card" style={{ marginTop: "14px", padding: "14px" }}>
+          <div
+            className="card"
+            style={{
+              marginTop: "14px",
+              padding: "28px",
+              width: "100%"
+            }}
+          >
             <h3>Novo Produto</h3>
 
             <div className="input-group">
@@ -104,12 +119,15 @@ export default function Flavors({ screen, switchTo }) {
               />
             </div>
 
-            <button className="btn" style={{ marginTop: "10px" }} onClick={addProduto}>Salvar</button>
-            <button className="ghost" style={{ marginTop: "10px" }} onClick={() => setShowForm(false)}>Cancelar</button>
+            <button className="btn" style={{ marginTop: "10px" }} onClick={addProduto}>
+              Salvar
+            </button>
+            <button className="ghost" style={{ marginTop: "10px" }} onClick={() => setShowForm(false)}>
+              Cancelar
+            </button>
           </div>
         )}
 
-        {/* Lista de produtos */}
         <div style={{ marginTop: "14px", flex: 1, overflow: "auto" }}>
           <div className="flavor-list">
             {loading ? (
@@ -118,10 +136,10 @@ export default function Flavors({ screen, switchTo }) {
               <div>Nenhum produto cadastrado.</div>
             ) : (
               produtos.map((p) => (
-                <div key={p.id} className="flavor-card card" style={{ padding: "14px" }}>
+                <div key={p.id} className="flavor-card card" style={{ padding: "30px" }}>
                   <div className="flavor-img">🍦</div>
-                  <div style={{ marginTop: "8px", fontWeight: "bold" }}>{p.sabor}</div>
-                  <div style={{ fontSize: "13px", marginTop: "4px", color: "rgba(107,63,63,0.7)" }}>
+                  <div style={{ marginTop: "20px", fontWeight: "bold" }}>{p.sabor}</div>
+                  <div style={{ fontSize: "13px", marginTop: "8px", color: "rgba(107,63,63,0.7)" }}>
                     Marca: {p.marca}
                   </div>
                   <div style={{ fontSize: "13px", color: "rgba(107,63,63,0.7)" }}>

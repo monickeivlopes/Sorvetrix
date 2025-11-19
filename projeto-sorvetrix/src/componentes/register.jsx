@@ -11,46 +11,118 @@ export default function Register() {
     cargo: "",
   });
 
-  const handleChange = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:8000/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
-      alert("Usuário criado com sucesso!");
-      navigate("/login");
-    } else {
-      alert("Erro ao registrar usuário.");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Erro de conexão com o servidor.");
   }
-};
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Usuário criado com sucesso!");
+        navigate("/login");
+      } else {
+        alert(data.detail || "Erro ao registrar usuário.");
+      }
+    } catch (err) {
+      alert("Erro de conexão com o servidor.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <main className="register-page">
-      <div className="card" style={{ maxWidth: "400px", margin: "80px auto", padding: "20px" }}>
-        <h2 style={{ color: "var(--brown)", textAlign: "center" }}>Criar Conta</h2>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <input name="nome" placeholder="Nome completo" value={form.nome} onChange={handleChange} required />
-          <input name="email" type="email" placeholder="E-mail" value={form.email} onChange={handleChange} required />
-          <input name="senha" type="password" placeholder="Senha" value={form.senha} onChange={handleChange} required />
-          <input name="cargo" placeholder="Cargo" value={form.cargo} onChange={handleChange} required />
-          <button type="submit" className="btn-primary">Registrar</button>
-        </form>
-        <p style={{ textAlign: "center", marginTop: "10px" }}>
-  Já tem conta? <Link to="/login">Entrar</Link>
-</p>
+    <section id="register" className="screen show">
+      <div className="layout" style={{ height: "90%" }}>
+        <div
+          className="right card"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "380px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <h2>Criar Conta</h2>
+
+            <label>Nome completo</label>
+            <input
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+            />
+
+            <label>E-mail</label>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+
+            <label>Senha</label>
+            <input
+              name="senha"
+              type="password"
+              value={form.senha}
+              onChange={handleChange}
+              required
+            />
+
+            <label>Cargo</label>
+            <input
+              name="cargo"
+              value={form.cargo}
+              onChange={handleChange}
+              required
+            />
+
+            <button
+              className="btn"
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{ marginTop: "10px" }}
+            >
+              {loading ? "Registrando..." : "Registrar"}
+            </button>
+
+            {/* Já tem conta */}
+            <p
+              style={{
+                marginTop: "15px",
+                fontSize: "14px",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              Já tem conta? <Link to="/login">Entrar</Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </main>
+    </section>
   );
 }
