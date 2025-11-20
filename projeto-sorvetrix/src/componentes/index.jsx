@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "../style.css";
 import Header from "./header";
-import Orders from "./orders";
-import Stocks from "./pedidos"; 
-import Flavors from "./flavors";
+import Orders from "./pedidos";
+import Stocks from "./estoque"; 
+import Produtos from "./produtos";
 
 export default function Dashboard() {
   const [screen, setScreen] = useState("dashboard");
@@ -70,8 +70,8 @@ export default function Dashboard() {
             </button>
 
             <button
-              className={screen === "flavors" ? "active" : ""}
-              onClick={() => switchTo("flavors")}
+              className={screen === "produtos" ? "active" : ""}
+              onClick={() => switchTo("produtos")}
             >
               Sabores
             </button>
@@ -277,7 +277,7 @@ export default function Dashboard() {
 
       <Orders screen={screen} switchTo={switchTo} />
       <Stocks screen={screen} switchTo={switchTo} />
-      <Flavors screen={screen} switchTo={switchTo} />
+      <Produtos screen={screen} switchTo={switchTo} />
     </main>
   );
 }

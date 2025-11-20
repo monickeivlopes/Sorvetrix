@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-
+import logout from '../assets/logout.png'
 import "../style.css";
 
 export default function Header() {
@@ -34,7 +34,7 @@ export default function Header() {
               color: "rgba(107,63,63,0.7)",
             }}
           >
-            Sistema de Gerenciamento — mockups
+            Sistema de Gerenciamento 
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function Header() {
           className="logout-btn"
           style={{
             marginLeft: "20px",
-            padding: "6px 12px",
+            padding: "3px 12px",
             borderRadius: "6px",
             background: "var(--brown)",
             color: "white",

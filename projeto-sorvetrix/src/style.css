@@ -12,6 +12,7 @@
   --card: #fffdef;
   --accent: #ffe6e9;
   --pink-strong: #f90989;
+  --pink-test: #f0208f;
 }
 
 /* =========================================================
@@ -107,11 +108,11 @@ nav button {
 nav a {
   text-decoration: none;
   font-weight: bold;
-  color: var(--pink-light);
+  color: var(--pink-test);
 }
 
 nav a:hover {
-  color: var(--pink-strong);
+  color: var(--pink-light);
   font-size: 110%;
 }
 
