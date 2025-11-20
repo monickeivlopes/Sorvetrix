@@ -1,17 +1,16 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel,  Field
+from pydantic import BaseModel, Field
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from typing import Optional
-import  datetime
-
-
+import datetime
 
 app = FastAPI()
-origins = ["http://localhost:5173"]  
+
+origins = ["http://localhost:5173"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -42,7 +41,6 @@ class User(Base):
 Base.metadata.create_all(bind=engine)
 
 
-
 class UserCreate(BaseModel):
     nome: str
     email: str
@@ -53,6 +51,7 @@ class UserLogin(BaseModel):
     email: str
     senha: str
 
+
 class Produto(Base):
     __tablename__ = "produtos"
     id = Column(Integer, primary_key=True, index=True)
@@ -61,18 +60,16 @@ class Produto(Base):
     lote = Column(Integer)
     validade = Column(DateTime)
 
-
 Base.metadata.create_all(bind=engine)
+
 
 class ProdutoSchema(BaseModel):
     marca: str
     sabor: str
     lote: int
-    validade: datetime.date
+    validade: str  
 
 
-class Config:
-    orm_mode = True
 
 class Venda(Base):
     __tablename__ = "vendas"
@@ -82,7 +79,6 @@ class Venda(Base):
     endereco = Column(String(300), nullable=True)
     status = Column(String(50), nullable=False, default="Em preparo")
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
-
 
 class VendaCreate(BaseModel):
     item: str
@@ -104,7 +100,6 @@ class VendaRead(BaseModel):
 
 Base.metadata.create_all(bind=engine)
 
- 
 
 def get_db():
     db = SessionLocal()
@@ -121,7 +116,6 @@ def create_token(email: str):
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-
 @app.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == user.email).first():
@@ -133,6 +127,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Usuário criado com sucesso!"}
 
+
 @app.post("/login")
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == credentials.email).first()
@@ -141,7 +136,6 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
     token = create_token(user.email)
     return {"access_token": token, "user": user.nome, "cargo": user.cargo}
-
 
 
 @app.post("/vendas", response_model=VendaRead)
@@ -157,10 +151,12 @@ def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
     db.refresh(v)
     return v
 
+
 @app.get("/vendas", response_model=list[VendaRead])
 def list_vendas(db: Session = Depends(get_db)):
     vendas = db.query(Venda).order_by(Venda.created_at.desc()).all()
     return vendas
+
 
 @app.get("/vendas/{venda_id}", response_model=VendaRead)
 def get_venda(venda_id: int, db: Session = Depends(get_db)):
@@ -168,6 +164,7 @@ def get_venda(venda_id: int, db: Session = Depends(get_db)):
     if not v:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     return v
+
 
 @app.put("/vendas/{venda_id}", response_model=VendaRead)
 def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
@@ -183,9 +180,11 @@ def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
         v.cliente = payload["cliente"]
     if "endereco" in payload:
         v.endereco = payload["endereco"]
+
     db.commit()
     db.refresh(v)
     return v
+
 
 @app.delete("/vendas/{venda_id}", status_code=204)
 def delete_venda(venda_id: int, db: Session = Depends(get_db)):
@@ -199,7 +198,14 @@ def delete_venda(venda_id: int, db: Session = Depends(get_db)):
 
 @app.post("/produtos")
 def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
-    novo = Produto(**produto.dict())
+    validade_dt = datetime.datetime.strptime(produto.validade, "%Y-%m-%d")
+
+    novo = Produto(
+        marca=produto.marca,
+        sabor=produto.sabor,
+        lote=produto.lote,
+        validade=validade_dt
+    )
     db.add(novo)
     db.commit()
     db.refresh(novo)
@@ -208,4 +214,47 @@ def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
 
 @app.get("/produtos")
 def listar_produtos(db: Session = Depends(get_db)):
-    return db.query(Produto).all()
+    produtos = db.query(Produto).all()
+    result = []
+    for p in produtos:
+        result.append({
+            "id": p.id,
+            "marca": p.marca,
+            "sabor": p.sabor,
+            "lote": p.lote,
+            "validade": p.validade.strftime("%Y-%m-%d")
+        })
+    return result
+
+
+@app.put("/produtos/{produto_id}")
+def update_produto(produto_id: int, dados: dict, db: Session = Depends(get_db)):
+    p = db.query(Produto).filter(Produto.id == produto_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    if "marca" in dados:
+        p.marca = dados["marca"]
+    if "sabor" in dados:
+        p.sabor = dados["sabor"]
+    if "lote" in dados:
+        p.lote = dados["lote"]
+    if "validade" in dados:
+        p.validade = datetime.datetime.strptime(dados["validade"], "%Y-%m-%d")
+
+    db.commit()
+    db.refresh(p)
+    return p
+
+
+
+@app.delete("/produtos/{produto_id}", status_code=204)
+def delete_produto(produto_id: int, db: Session = Depends(get_db)):
+    p = db.query(Produto).filter(Produto.id == produto_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    db.delete(p)
+    db.commit()
+    return None
+
