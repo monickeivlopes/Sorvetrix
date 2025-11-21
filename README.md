@@ -1,32 +1,38 @@
-# Sorvetrix
-Projeto Interdisciplinar que abrange as matérias:
-- Projeto de Interface do Usúario
-- Programação Orientada a Serviços
-- Projeto de Desenvolvimento de Sistemas para Internet
+# 🍨 Sorvetrix
 
-# Proposta
-Sistema de gerenciamento para uma sorveteria
+Projeto Interdisciplinar que abrange as disciplinas:
 
-# Desenvolvedores
-- Eunice Cristina 
-- Gabriely Medeiros 
-- Lívia Vitória
-- Monicke Lopes
-- Wesley Darlly
+- **Projeto de Interface do Usuário**
+- **Programação Orientada a Serviços**
+- **Projeto de Desenvolvimento de Sistemas para Internet**
 
+---
 
+## 📌 Proposta
 
-#Rodar projeto
+Desenvolver um **sistema de gerenciamento para uma sorveteria**, incluindo interface React e API em FastAPI.
 
-1. Rodar API
-cd venv/Scripts
-activate
-cd ..
-cd ..
-pip install uvicorn (caso não tenha)
+---
+
+## 👩‍💻 Desenvolvedores
+
+- Eunice Cristina  
+- Gabriely Medeiros  
+- Lívia Vitória  
+- Monicke Lopes  
+- Wesley Darlly  
+
+---
+
+# 🚀 Como Rodar o Projeto
+
+## 🔧 1. Rodar a API (FastAPI)
+
+```bash
+cd backend        # se a API estiver dentro de uma pasta chamada backend
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt   # ou pip install uvicorn fastapi
+
 python -m uvicorn main:app --reload
-
-2. Rodar React
-cd Front
-npm install
-npm run dev
