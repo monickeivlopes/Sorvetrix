@@ -42,25 +42,13 @@ Para rodar localmente, execute os passos abaixo.
 
 # 🛠️ 1. Rodar a API (FastAPI)
 
-### 📂 Acessar a pasta do backend
-```bash
-cd backend
-````
-
-### 🧰 Criar e ativar ambiente virtual
+### 🧰 Ativar ambiente virtual
 
 ```bash
-python -m venv venv
 venv\Scripts\activate
 ```
 
 ### 📦 Instalar dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-Se não existir *requirements.txt*, instale manualmente:
 
 ```bash
 pip install fastapi uvicorn
@@ -111,7 +99,6 @@ O projeto ficará disponível em:
 # 🧪 Observações Importantes
 
 * A API deve estar rodando **antes** do frontend.
-* Caso tenha erro de CORS, basta avisar que posso incluir uma configuração pronta para resolver.
-* Se desejar rodar frontend + backend juntos com um único comando (`concurrently`), posso adicionar isso ao README também.
+
 
 
