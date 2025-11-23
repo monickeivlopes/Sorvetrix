@@ -275,9 +275,18 @@ export default function Dashboard() {
         </div>
       </section>
 
+    {screen === "orders" && (
       <Orders screen={screen} switchTo={switchTo} />
+    )}
+
+    {screen === "stocks" && (
       <Stocks screen={screen} switchTo={switchTo} />
+    )}
+
+    {screen === "produtos" && (
       <Produtos screen={screen} switchTo={switchTo} />
+    )}
+
     </main>
   );
 }

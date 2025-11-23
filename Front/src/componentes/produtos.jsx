@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../style.css";
 
 export default function Produtos({ screen }) {
-  const API_BASE = "http://localhost:8000";
+  const API_BASE = "http://127.0.0.1:8000";
 
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
