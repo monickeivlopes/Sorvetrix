@@ -210,6 +210,9 @@ input, select, textarea {
   box-shadow: 0 6px 18px rgba(0,0,0,0.04);
 }
 
+
+  
+
 /* Grids auxiliares */
 .row {
   display: flex;
@@ -422,10 +425,42 @@ input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   background: white;
   border-radius: 12px;
 }
+.order.card{
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.orders-buttons{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+}
+.orders-buttons button{
+  width: 150px;
+  height: 30px;
+  font-size: x-small;
+  font-weight: 700;
+  margin: 0px 10px;
+  border: 0.5px solid grey;
+  background-color: white;
+  box-shadow: 0 8px 10px rgba(188, 185, 185, 0.5);
+  color: var(--pink-strong);
+ 
+
+}
+.orders-buttons button:hover{
+  background-color: var(--pink-strong);
+  color: white;
+  
+}
+
+                 
 
 .tags {
   display: flex;

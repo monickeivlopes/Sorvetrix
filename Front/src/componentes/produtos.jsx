@@ -15,6 +15,7 @@ export default function Produtos({ screen }) {
     sabor: "",
     lote: "",
     validade: "",
+    valor: "",       // 🔥 NOVO CAMPO
   });
 
   // Carregar produtos
@@ -42,18 +43,20 @@ export default function Produtos({ screen }) {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const payload = {
+      marca: formData.marca,
+      sabor: formData.sabor,
+      lote: Number(formData.lote),
+      validade: formData.validade,
+      valor: Number(formData.valor),     // 🔥 ENVIAR VALOR
+    };
+
     if (isEditing) {
-      // EDITAR produto
       try {
         const response = await fetch(`${API_BASE}/produtos/${editId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            marca: formData.marca,
-            sabor: formData.sabor,
-            lote: Number(formData.lote),
-            validade: formData.validade,
-          }),
+          body: JSON.stringify(payload),
         });
 
         const updated = await response.json();
@@ -61,7 +64,6 @@ export default function Produtos({ screen }) {
         setProdutos(
           produtos.map((p) => (p.id === editId ? updated : p))
         );
-
       } catch (error) {
         console.error("Erro ao editar produto:", error);
       }
@@ -72,21 +74,15 @@ export default function Produtos({ screen }) {
       return;
     }
 
-    // CRIAR produto
+    // Criar produto
     try {
       const response = await fetch(`${API_BASE}/produtos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          marca: formData.marca,
-          sabor: formData.sabor,
-          lote: Number(formData.lote),
-          validade: formData.validade,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const newProduct = await response.json();
-
       setProdutos([...produtos, newProduct]);
       setShowForm(false);
 
@@ -102,6 +98,7 @@ export default function Produtos({ screen }) {
       sabor: produto.sabor,
       lote: produto.lote,
       validade: produto.validade,
+      valor: produto.valor,  // 🔥 JÁ VEM DO BACKEND
     });
 
     setIsEditing(true);
@@ -154,7 +151,7 @@ export default function Produtos({ screen }) {
             onClick={() => {
               setShowForm(true);
               setIsEditing(false);
-              setFormData({ marca: "", sabor: "", lote: "", validade: "" });
+              setFormData({ marca: "", sabor: "", lote: "", validade: "", valor: "" });
             }}
           >
             + Novo Produto
@@ -186,6 +183,10 @@ export default function Produtos({ screen }) {
             <label>Validade</label>
             <input name="validade" type="date" onChange={handleChange} value={formData.validade} required />
 
+            {/* 🔥 NOVO CAMPO */}
+            <label>Valor (R$)</label>
+            <input name="valor" type="number" step="0.01" onChange={handleChange} value={formData.valor} required />
+
             <button className="btn" type="submit">
               {isEditing ? "Salvar Alterações" : "Salvar"}
             </button>
@@ -216,6 +217,8 @@ export default function Produtos({ screen }) {
                       {p.sabor} — Lote {p.lote}
                       <br />
                       Validade: {formatDate(p.validade)}
+                      <br />
+                      <strong>Valor: R$ {p.valor.toFixed(2)}</strong> {/* 🔥 NOVO CAMPO NA LISTA */}
                     </div>
                   </div>
 

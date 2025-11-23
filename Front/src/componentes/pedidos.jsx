@@ -1,154 +1,137 @@
 import { useEffect, useState } from "react";
 
-console.log("📌 PEDIDOS RENDERIZOU");
+export default function Pedidos() {
+  const API_BASE = "http://localhost:8000";
 
-export default function Orders({ screen, switchTo }) {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // form state
-  const [item, setItem] = useState("");
-  const [cliente, setCliente] = useState("");
-  const [endereco, setEndereco] = useState("");
-
-  // produtos
   const [produtos, setProdutos] = useState([]);
+  const [pedidos, setPedidos] = useState([]);
+  const [pedidosOriginais, setPedidosOriginais] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const API_BASE = "http://127.0.0.1:8000";
+  const [formData, setFormData] = useState({
+    cliente: "",
+    endereco: "",
+    items: [],
+  });
+
+  const [currentItem, setCurrentItem] = useState({
+    produto_id: "",
+    quantidade: 1,
+  });
 
   useEffect(() => {
-    console.log("SCREEN ATUAL:", screen);
+    async function carregar() {
+      try {
+        const resProdutos = await fetch(`${API_BASE}/produtos`);
+        const produtosData = await resProdutos.json();
+        setProdutos(produtosData);
 
-    // AGORA funciona: Orders é realmente montado quando a tela abre
-    if (screen === "orders") {
-      loadOrders();
-      loadProdutos();
-    }
-  }, [screen]);
-
-  // ============================
-  // Carregar pedidos
-  // ============================
-  async function loadOrders() {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/vendas`);
-      if (!res.ok) throw new Error("Falha ao carregar pedidos");
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao carregar pedidos");
-    } finally {
+        const resPedidos = await fetch(`${API_BASE}/vendas`);
+        const vendasData = await resPedidos.json();
+        setPedidos(vendasData);
+        setPedidosOriginais(vendasData);
+      } catch (e) {
+        console.log("Erro ao carregar:", e);
+      }
       setLoading(false);
     }
+    carregar();
+  }, []);
+
+  // Adicionar item ao estado do pedido
+  function adicionarItem() {
+    if (!currentItem.produto_id) return;
+
+    const produto = produtos.find(p => p.id == currentItem.produto_id);
+    const quantidade = Number(currentItem.quantidade);
+    const subtotal = produto.valor * quantidade;
+
+    setFormData({
+      ...formData,
+      items: [
+        ...formData.items,
+        {
+          produto_id: produto.id,
+          quantidade,
+          nome: `${produto.marca} - ${produto.sabor}`,
+          valor_unit: produto.valor,
+          subtotal,
+        }
+      ]
+    });
+
+    setCurrentItem({ produto_id: "", quantidade: 1 });
   }
 
-  // ============================
-  // Carregar produtos
-  // ============================
-  async function loadProdutos() {
-    try {
-      const res = await fetch(`${API_BASE}/produtos`);
-      if (!res.ok) throw new Error("Falha ao carregar produtos");
-      const data = await res.json();
-      setProdutos(data);
-      console.log("PRODUTOS CARREGADOS:", data); // <--- para confirmar
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao carregar produtos");
-    }
-  }
-
-  // ============================
-  // Adicionar pedido
-  // ============================
-  async function addOrder() {
-    if (!item || !cliente) return alert("Preencha produto e cliente");
+  // Enviar pedido
+  async function handleSubmit(e) {
+    e.preventDefault();
 
     const payload = {
-      item,
-      cliente,
-      endereco,
-      status: "Em preparo",
-      created_at: new Date().toISOString(),
+      cliente: formData.cliente,
+      endereco: formData.endereco,
+      items: formData.items.map(it => ({
+        produto_id: it.produto_id,
+        quantidade: it.quantidade,
+      }))
     };
 
-    try {
-      const res = await fetch(`${API_BASE}/vendas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Falha ao adicionar pedido");
+    await fetch(`${API_BASE}/vendas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      const created = await res.json();
-      setOrders((s) => [created, ...s]);
+    const res = await fetch(`${API_BASE}/vendas`);
+    const vendasData = await res.json();
 
-      setItem("");
-      setCliente("");
-      setEndereco("");
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao adicionar pedido");
-    }
+    setPedidos(vendasData);
+    setPedidosOriginais(vendasData);
+
+    setFormData({ cliente: "", endereco: "", items: [] });
+    setCurrentItem({ produto_id: "", quantidade: 1 });
   }
 
-  // ============================
-  // Atualizar status
-  // ============================
-  async function updateStatus(id, nextStatus) {
+  async function alterarStatus(id, novoStatus) {
     try {
-      const res = await fetch(`${API_BASE}/vendas/${id}`, {
+      await fetch(`${API_BASE}/vendas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus }),
+        body: JSON.stringify({ status: novoStatus }),
       });
 
-      if (!res.ok) throw new Error("Falha ao atualizar status");
+      const res = await fetch(`${API_BASE}/vendas`);
+      const vendasData = await res.json();
 
-      const updated = await res.json();
-      setOrders((s) => s.map((o) => (o.id === updated.id ? updated : o)));
+      setPedidos(vendasData);
+      setPedidosOriginais(vendasData);
     } catch (err) {
-      console.error(err);
-      alert("Erro ao atualizar pedido");
+      console.log("Erro ao alterar status:", err);
     }
   }
 
-  // ============================
-  // Apagar pedido
-  // ============================
-  async function deleteOrder(id) {
-    if (!confirm("Remover pedido?")) return;
-
+  async function excluirPedido(id) {
     try {
-      const res = await fetch(`${API_BASE}/vendas/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(`${API_BASE}/vendas/${id}`, { method: "DELETE" });
 
-      if (res.status !== 204) throw new Error("Falha ao deletar");
-
-      setOrders((s) => s.filter((o) => o.id !== id));
+      setPedidos(prev => prev.filter(p => p.id !== id));
+      setPedidosOriginais(prev => prev.filter(p => p.id !== id));
     } catch (err) {
-      console.error(err);
-      alert("Erro ao remover pedido");
+      console.log("Erro ao excluir pedido:", err);
     }
   }
+
+  if (loading) return <p>Carregando...</p>;
 
   return (
     <>
       <div className="drip"></div>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        {/* Header da tela */}
-        <div
-          className="card"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        
+
+        {/* Header */}
+        <div className="card" style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
             <h2 style={{ margin: 0, color: "var(--brown)" }}>Pedidos & Delivery</h2>
             <div style={{ color: "rgba(107,63,63,0.6)" }}>
@@ -157,76 +140,76 @@ export default function Orders({ screen, switchTo }) {
           </div>
 
           <div style={{ display: "flex", gap: "8px" }}>
-            <button className="ghost" onClick={() => loadOrders()}>
-              Todos
-            </button>
-
-            <button
-              className="ghost"
-              onClick={() =>
-                setOrders((s) => s.filter((o) => o.status === "Em preparo"))
-              }
-            >
-              Em preparo
-            </button>
-
-            <button
-              className="ghost"
-              onClick={() =>
-                setOrders((s) => s.filter((o) => o.status === "Saiu para entrega"))
-              }
-            >
-              Saiu para entrega
-            </button>
+            <button className="ghost" onClick={() => setPedidos(pedidosOriginais)}>Todos</button>
+            <button className="ghost" onClick={() => setPedidos(pedidosOriginais.filter(i => i.status === "Em preparo"))}>Em preparo</button>
+            <button className="ghost" onClick={() => setPedidos(pedidosOriginais.filter(i => i.status === "Saiu para entrega"))}>Saiu para entrega</button>
+            <button className="ghost" onClick={() => setPedidos(pedidosOriginais.filter(i => i.status === "Finalizado"))}>Finalizado</button>
           </div>
         </div>
 
-        {/* Adicionar pedido */}
-        <div className="card" style={{ marginTop: "14px", padding: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        {/* Form */}
+        <div className="card" style={{ marginTop: "14px", padding: "14px" }}>
           <h3 style={{ margin: 0, color: "var(--brown)" }}>Adicionar Pedido</h3>
 
-          <select className="input" value={item} onChange={(e) => setItem(e.target.value)}>
-            <option value="">Selecione um produto...</option>
+          {/* Seleção de itens */}
+          <div style={{ display: "flex", gap: 8 }}>
+            <select
+              className="input"
+              value={currentItem.produto_id}
+              onChange={(e) => setCurrentItem({ ...currentItem, produto_id: e.target.value })}
+            >
+              <option value="">Selecione um produto...</option>
+              {produtos.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.marca} — {p.sabor} (R$ {p.valor.toFixed(2)})
+                </option>
+              ))}
+            </select>
 
-            {produtos.map((p) => (
-              <option key={p.id} value={`${p.marca} - ${p.sabor}`}>
-                {p.marca} — {p.sabor}
-              </option>
-            ))}
-          </select>
+            <input
+              type="number"
+              className="input"
+              min="1"
+              value={currentItem.quantidade}
+              onChange={(e) => setCurrentItem({ ...currentItem, quantidade: e.target.value })}
+              style={{ width: "80px" }}
+            />
 
+            <button className="btn" onClick={adicionarItem}>Adicionar item</button>
+          </div>
+
+          {/* Itens do pedido */}
+          {formData.items.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <h4>Itens selecionados:</h4>
+              {formData.items.map((it, idx) => (
+                <div key={idx} className="card" style={{ padding: 8, marginBottom: 8 }}>
+                  {it.nome} — {it.quantidade} un — R$ {it.subtotal.toFixed(2)}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Cliente */}
           <input
             className="input"
             placeholder="Cliente"
-            value={cliente}
-            onChange={(e) => setCliente(e.target.value)}
+            value={formData.cliente}
+            onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
           />
 
+          {/* Endereço */}
           <input
             className="input"
             placeholder="Endereço / Retirada"
-            value={endereco}
-            onChange={(e) => setEndereco(e.target.value)}
+            value={formData.endereco}
+            onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
           />
 
           <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn" onClick={addOrder}>
-              Adicionar
-            </button>
-
-            <button
-              className="ghost"
-              onClick={() => {
-                setItem("");
-                setCliente("");
-                setEndereco("");
-              }}
-            >
+            <button className="btn" onClick={handleSubmit}>Finalizar Pedido</button>
+            <button className="ghost" onClick={() => setFormData({ cliente: "", endereco: "", items: [] })}>
               Limpar
-            </button>
-
-            <button className="ghost" onClick={loadOrders}>
-              Atualizar
             </button>
           </div>
         </div>
@@ -234,28 +217,43 @@ export default function Orders({ screen, switchTo }) {
         {/* Lista de pedidos */}
         <div style={{ marginTop: "14px", flex: 1, overflow: "auto" }}>
           <div className="orders-list">
-            {loading && <div className="card">Carregando pedidos...</div>}
+            
+            {pedidos.map((order) => (
+              <div key={order.id} className="order card" style={{ display: "flex", justifyContent: "space-between" }}>
 
-            {orders.map((order) => (
-              <div key={order.id} className="order card">
                 <div>
                   <div style={{ fontWeight: 700 }}>
-                    #{order.id} — {order.item}
+                    #{order.id}
                   </div>
+
+                  <div style={{ marginTop: 6 }}>
+                    {order.items.map((it, idx) => (
+                      <div key={idx}>
+                        {it.nome} — {it.quantidade} un — R$ {it.subtotal.toFixed(2)}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ marginTop: 6, fontWeight: 700 }}>
+                    Total: R$ {order.valor_total.toFixed(2)}
+                  </div>
+
                   <div style={{ fontSize: "13px", color: "rgba(107,63,63,0.6)" }}>
                     Cliente: {order.cliente} — {order.endereco || "Retirada"}
                   </div>
+
                   <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.45)" }}>
                     Criado: {new Date(order.created_at).toLocaleString()}
                   </div>
                 </div>
 
-                <div className="tags">
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  
                   <div
                     style={{
                       fontWeight: 800,
                       color:
-                        order.status === "Pronto"
+                        order.status === "Finalizado"
                           ? "#2d7a66"
                           : order.status === "Saiu para entrega"
                           ? "#c47f00"
@@ -265,42 +263,27 @@ export default function Orders({ screen, switchTo }) {
                     {order.status}
                   </div>
 
-                  <div style={{ display: "flex", gap: 6 }}>
-                    {order.status !== "Pronto" && (
-                      <button
-                        className="btn"
-                        style={{ padding: "8px 10px", fontSize: "13px" }}
-                        onClick={() => updateStatus(order.id, "Pronto")}
-                      >
-                        Marcar Pronto
-                      </button>
-                    )}
-
-                    {order.status !== "Saiu para entrega" && (
-                      <button
-                        className="btn"
-                        style={{ padding: "8px 10px", fontSize: "13px" }}
-                        onClick={() => updateStatus(order.id, "Saiu para entrega")}
-                      >
-                        Saiu p/ entrega
-                      </button>
-                    )}
+                  <div className="orders-buttons">
+                    <button className="small" onClick={() => alterarStatus(order.id, "Em preparo")}>Em preparo</button>
+                    <button className="small" onClick={() => alterarStatus(order.id, "Saiu para entrega")}>Saiu para entrega</button>
+                    <button className="small" onClick={() => alterarStatus(order.id, "Finalizado")}>Finalizado</button>
 
                     <button
-                      className="btn"
-                      style={{ padding: "8px 10px", fontSize: "13px" }}
-                      onClick={() => deleteOrder(order.id)}
+                      style={{ backgroundColor: "#f90989", color: "white" }}
+                      className="small danger"
+                      onClick={() => excluirPedido(order.id)}
                     >
-                      Remover
+                      Excluir
                     </button>
                   </div>
                 </div>
               </div>
             ))}
 
-            {!loading && orders.length === 0 && (
+            {pedidos.length === 0 && (
               <div className="card">Nenhum pedido encontrado.</div>
             )}
+
           </div>
         </div>
       </div>

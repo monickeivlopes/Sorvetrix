@@ -53,10 +53,10 @@ export default function Header() {
           Estoque
         </NavLink>
         <NavLink
-          to="/sabores"
+          to="/produtos"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
-          Sabores
+          Produtos
         </NavLink>
         <NavLink
           to="/pedidos"

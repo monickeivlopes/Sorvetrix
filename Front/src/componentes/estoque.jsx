@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Header from "./header";
 
 export default function Stocks({ screen, switchTo }) {
   const [produtos, setProdutos] = useState([]);
@@ -39,7 +40,7 @@ export default function Stocks({ screen, switchTo }) {
 
       <div className="card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
 
-        {/* Header */}
+        <Header/>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h2 style={{ margin: 0, color: "var(--brown)" }}>Gerenciamento de Estoque</h2>
