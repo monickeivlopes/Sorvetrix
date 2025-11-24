@@ -35,6 +35,8 @@ export default function Stocks({ screen, switchTo }) {
   };
 
   return (
+    <>
+    <Header/>
     <section id="stock" className={`screen ${screen === "stock" ? "show" : ""}`}>
       <div className="drip"></div>
 
@@ -114,5 +116,6 @@ export default function Stocks({ screen, switchTo }) {
 
       </div>
     </section>
+    </>
   );
 }

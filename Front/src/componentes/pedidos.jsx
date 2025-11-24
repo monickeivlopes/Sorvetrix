@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Header from "./header";
 
 export default function Pedidos() {
   const API_BASE = "http://localhost:8000";
@@ -125,7 +126,10 @@ export default function Pedidos() {
 
   return (
     <>
-      <div className="drip"></div>
+    <Header/>
+     <section id="orders"
+      className={`screen ${screen === "orders" ? "show" : ""}`}>
+       <div className="drip"></div>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         
@@ -287,6 +291,7 @@ export default function Pedidos() {
           </div>
         </div>
       </div>
+     </section>
     </>
   );
 }

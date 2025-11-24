@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../style.css";
+import Header from "./header";
 
 export default function Produtos({ screen }) {
   const API_BASE = "http://127.0.0.1:8000";
@@ -126,6 +127,8 @@ export default function Produtos({ screen }) {
   };
 
   return (
+    <>
+    <Header/>
     <section
       id="products"
       className={`screen ${screen === "products" ? "show" : ""}`}
@@ -233,5 +236,6 @@ export default function Produtos({ screen }) {
         </div>
       </div>
     </section>
+    </>
   );
 }

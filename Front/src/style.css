@@ -23,7 +23,8 @@
 }
 
 html, body {
-  margin: 0;
+  width: 80%;
+  margin-left: 8%;
   display: flex;
   justify-content: center;
   background: linear-gradient(180deg, #fdefdb 0%, #ffc1da 100%);
@@ -31,21 +32,13 @@ html, body {
   color: #6b3f3f;
 }
 
-/* Background texture */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle at 15% 10%, rgba(0,0,0,0.04) 0 2%, transparent 3%),
-    radial-gradient(circle at 70% 50%, rgba(0,0,0,0.03) 0 2%, transparent 3%),
-    linear-gradient(135deg, rgba(0,0,0,0.02) 12px, transparent 12px),
-    linear-gradient(45deg, rgba(0,0,0,0.02) 12px, transparent 12px);
-  background-size: 60px 60px, 60px 60px, 24px 24px, 24px 24px;
-  mix-blend-mode: multiply;
-  opacity: 0.12;
+#root{
+  width: 100%;
 }
+
+
+
+/* Background texture */
 
 /* =========================================================
    APP STRUCTURE
@@ -58,6 +51,7 @@ body::before {
 }
 
 header {
+  width: 100%;
   height: 10%;
   padding: 16px 28px;
   margin-bottom: 20px;
@@ -67,9 +61,11 @@ header {
 }
 
 .brand {
+  
   display: flex;
   align-items: center;
-  gap: 14px;
+  
+  width: 100%;
 }
 
 /* Logo */
@@ -130,7 +126,7 @@ main {
 }
 
 .screen {
-  width: 100%;
+  
   max-width: 1200px;
   height: 110%;
   padding: 28px;
@@ -141,6 +137,13 @@ main {
   box-shadow: 0 14px 40px rgba(0,0,0,0.08);
 
   position: relative;
+}
+#login.screen{
+  width: 100%;
+}
+#dashboard.screen{
+  width: 120%;
+  margin-left: -10%;
 }
 
 .screen.show {
@@ -246,6 +249,9 @@ input, select, textarea {
   flex-direction: column;
   justify-content: center;
   gap: 12px;
+}
+#login.screen{
+  width: 100%;
 }
 
 /* =========================================================

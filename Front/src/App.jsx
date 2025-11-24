@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Header from "./componentes/header";
+
 import Dashboard from "./componentes/index";
 import Orders from "./componentes/pedidos";
 import Stocks from "./componentes/estoque";
@@ -8,43 +8,58 @@ import Produtos from "./componentes/produtos";
 import Login from "./componentes/login";
 import Register from "./componentes/register";
 
-
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Atualiza automaticamente se o token mudar (ex: login ou logout)
   useEffect(() => {
-    const handleStorageChange = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    // Verifica token ao iniciar o app
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
 
   return (
     <Router>
-      {isLoggedIn && <Header />}
       <Routes>
-       
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+        {/* Login deve redirecionar se já estiver logado */}
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
         {/* Rotas privadas */}
-        {isLoggedIn ? (
-          <>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/estoque" element={<Stocks />} />
-            <Route path="/produtos" element={<Produtos />} />
-            <Route path="/pedidos" element={<Orders />} />
-          </>
-        ) : (
-          <Route path="/" element={<Navigate to="/login" />} />
-        )}
+        <Route
+          path="/dashboard"
+          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/estoque"
+          element={isLoggedIn ? <Stocks /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/produtos"
+          element={isLoggedIn ? <Produtos /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/pedidos"
+          element={isLoggedIn ? <Orders /> : <Navigate to="/login" />}
+        />
+
+        {/* Rota padrão */}
+        <Route
+          path="/"
+          element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
+        />
+
       </Routes>
     </Router>
   );
 }
-
-

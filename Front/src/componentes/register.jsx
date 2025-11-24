@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../style.css";
+import Header from "./header";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ export default function Register() {
   }
 
   return (
+    <>
+    <Header/>
     <section id="register" className="screen show">
       <div className="layout" style={{ height: "90%" }}>
         <div
@@ -64,9 +67,10 @@ export default function Register() {
               alignItems: "flex-start",
             }}
           >
-            <h2>Criar Conta</h2>
+            <h2 style={{alignSelf:"center", marginBottom:"5%"}}>Criar Conta</h2>
 
-            <label>Nome completo</label>
+            <form action="#" >
+              <label>Nome completo</label>
             <input
               name="nome"
               value={form.nome}
@@ -108,6 +112,7 @@ export default function Register() {
             >
               {loading ? "Registrando..." : "Registrar"}
             </button>
+            </form>
 
             {/* Já tem conta */}
             <p
@@ -124,5 +129,6 @@ export default function Register() {
         </div>
       </div>
     </section>
+    </>
   );
 }

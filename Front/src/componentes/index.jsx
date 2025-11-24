@@ -30,7 +30,7 @@ export default function Dashboard() {
   return (
     <main>
       
-     
+      <Header/>
 
       <section
         id="dashboard"

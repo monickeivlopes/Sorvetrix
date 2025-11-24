@@ -37,6 +37,7 @@ export default function Login() {
 
   return (
     <>
+     <Header />
       <section id="login" className="screen show">
         <div className="layout" style={{ height: "100%" }}>
           <div
@@ -98,7 +99,8 @@ export default function Login() {
               >
                 <button
                   className="btn"
-                  style={{ width: "100%", maxWidth: "200px" }}
+                  style={{ width: "100%", maxWidth: "200px", maxHeight:"40px"
+                   }}
                   onClick={() => navigate("/register")}
                 >
                   Criar uma conta
