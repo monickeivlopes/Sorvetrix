@@ -69,7 +69,7 @@ class Produto(Base):
     lote = Column(Integer)
     validade = Column(DateTime)
     valor = Column(Float)
-
+    quantidade = Column(Integer, default=1)  # 🟢 campo adicionado
 
 class ProdutoSchema(BaseModel):
     marca: str
@@ -77,7 +77,15 @@ class ProdutoSchema(BaseModel):
     lote: int
     validade: str
     valor: float
+    quantidade: int = 1
 
+    class Config:
+        from_attributes = True
+
+
+# -----------------------------
+# VENDAS + ITENS
+# -----------------------------
 # -----------------------------
 # VENDAS + ITENS
 # -----------------------------
@@ -98,12 +106,13 @@ class VendaItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     venda_id = Column(Integer, ForeignKey("vendas.id", ondelete="CASCADE"), nullable=False)
     produto_id = Column(Integer, nullable=False)
-    nome = Column(String, nullable=False)         # ex: "Marca - Sabor"
+    nome = Column(String, nullable=False)
     quantidade = Column(Integer, nullable=False)
     valor_unit = Column(Float, nullable=False)
     subtotal = Column(Float, nullable=False)
 
     venda = relationship("Venda", back_populates="items")
+
 
 
 # --------------- Pydantic schemas para Vendas ---------------
@@ -117,26 +126,23 @@ class VendaItemRead(BaseModel):
     quantidade: int
     valor_unit: float
     subtotal: float
-
-    class Config:
-        orm_mode = True
+    class Config: orm_mode = True
 
 class VendaCreate(BaseModel):
     cliente: str
     endereco: Optional[str] = None
-    items: List[VendaItemCreate] = Field(..., min_items=1)
+    items: List[VendaItemCreate]
 
 class VendaRead(BaseModel):
     id: int
     cliente: str
-    endereco: Optional[str] = None
+    endereco: Optional[str]
     status: str
     valor_total: float
     created_at: datetime.datetime
     items: List[VendaItemRead]
+    class Config: orm_mode = True
 
-    class Config:
-        orm_mode = True
 
 # -----------------------------
 # CREATE TABLES
@@ -222,36 +228,51 @@ def listar_produtos(db: Session = Depends(get_db)):
             "sabor": p.sabor,
             "lote": p.lote,
             "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
-            "valor": p.valor
+            "valor": p.valor,
+            "quantidade": p.quantidade   # 🔥🔥🔥 AQUI FALTAVA!!
         }
         for p in produtos
     ]
+
 
 @app.put("/produtos/{produto_id}")
 def update_produto(produto_id: int, dados: dict, db: Session = Depends(get_db)):
     p = db.query(Produto).filter(Produto.id == produto_id).first()
     if not p:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
+
     if "marca" in dados:
         p.marca = dados["marca"]
+
     if "sabor" in dados:
         p.sabor = dados["sabor"]
+
     if "lote" in dados:
         p.lote = dados["lote"]
+
     if "valor" in dados:
         p.valor = dados["valor"]
+
     if "validade" in dados:
         p.validade = datetime.datetime.strptime(dados["validade"], "%Y-%m-%d")
+
+    # 🟢 ADICIONADO: atualizar quantidade
+    if "quantidade" in dados:
+        p.quantidade = dados["quantidade"]
+
     db.commit()
     db.refresh(p)
+
     return {
         "id": p.id,
         "marca": p.marca,
         "sabor": p.sabor,
         "lote": p.lote,
         "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
-        "valor": p.valor
+        "valor": p.valor,
+        "quantidade": p.quantidade  # 🟢 devolve quantidade também
     }
+
 
 @app.delete("/produtos/{produto_id}", status_code=204)
 def delete_produto(produto_id: int, db: Session = Depends(get_db)):
@@ -267,119 +288,78 @@ def delete_produto(produto_id: int, db: Session = Depends(get_db)):
 # -----------------------------
 @app.post("/vendas", response_model=VendaRead)
 def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
-    # validate items and compute totals
-    if not venda.items or len(venda.items) == 0:
-        raise HTTPException(status_code=400, detail="Pedido deve conter ao menos 1 item")
+    if not venda.items:
+        raise HTTPException(status_code=400, detail="Pedido precisa ter itens")
 
-    valor_total = 0.0
-    nova_venda = Venda(
+    nova = Venda(
         cliente=venda.cliente,
         endereco=venda.endereco,
         status="Em preparo",
-        valor_total=0.0
+        valor_total=0
     )
-    db.add(nova_venda)
+    db.add(nova)
     db.commit()
-    db.refresh(nova_venda)
+    db.refresh(nova)
 
-    items_to_add = []
+    total = 0
+    itens_to_add = []
+
     for it in venda.items:
-        produto = db.query(Produto).filter(Produto.id == it.produto_id).first()
-        if not produto:
-            # rollback parcial: apagar venda criada
-            db.delete(nova_venda)
+        prod = db.query(Produto).filter(Produto.id == it.produto_id).first()
+        if not prod:
+            db.delete(nova)
             db.commit()
-            raise HTTPException(status_code=404, detail=f"Produto id {it.produto_id} não encontrado")
-        quantidade = max(1, int(it.quantidade))
-        subtotal = produto.valor * quantidade
-        valor_total += subtotal
+            raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-        vi = VendaItem(
-            venda_id=nova_venda.id,
-            produto_id=produto.id,
-            nome=f"{produto.marca} - {produto.sabor}",
-            quantidade=quantidade,
-            valor_unit=produto.valor,
-            subtotal=subtotal
+        qty = max(1, it.quantidade)
+        subtotal = prod.valor * qty
+        total += subtotal
+
+        itens_to_add.append(
+            VendaItem(
+                venda_id=nova.id,
+                produto_id=prod.id,
+                nome=f"{prod.marca} - {prod.sabor}",
+                quantidade=qty,
+                valor_unit=prod.valor,
+                subtotal=subtotal
+            )
         )
-        items_to_add.append(vi)
 
-    # adicionar todos os items
-    db.add_all(items_to_add)
-    # atualizar venda com valor_total
-    nova_venda.valor_total = valor_total
+        # 🔥🔥🔥 ATUALIZAÇÃO DO ESTOQUE (Faltava isso!)
+        if prod.quantidade is None:
+            prod.quantidade = 0
+
+        prod.quantidade -= qty
+
+        if prod.quantidade < 0:
+            prod.quantidade = 0
+
+
+    
+        
+
+    db.add_all(itens_to_add)
+    nova.valor_total = total
     db.commit()
-    db.refresh(nova_venda)
+    db.refresh(nova)
 
-    # for response: carregar items
-    db.refresh(nova_venda)
-    return {
-        "id": nova_venda.id,
-        "cliente": nova_venda.cliente,
-        "endereco": nova_venda.endereco,
-        "status": nova_venda.status,
-        "valor_total": nova_venda.valor_total,
-        "created_at": nova_venda.created_at,
-        "items": [
-            {
-                "produto_id": it.produto_id,
-                "nome": it.nome,
-                "quantidade": it.quantidade,
-                "valor_unit": it.valor_unit,
-                "subtotal": it.subtotal
-            } for it in nova_venda.items
-        ]
-    }
+
+    return nova
+
 
 @app.get("/vendas", response_model=List[VendaRead])
 def list_vendas(db: Session = Depends(get_db)):
     vendas = db.query(Venda).order_by(Venda.created_at.desc()).all()
-    result = []
-    for v in vendas:
-        items = [
-            {
-                "produto_id": it.produto_id,
-                "nome": it.nome,
-                "quantidade": it.quantidade,
-                "valor_unit": it.valor_unit,
-                "subtotal": it.subtotal
-            } for it in v.items
-        ]
-        result.append({
-            "id": v.id,
-            "cliente": v.cliente,
-            "endereco": v.endereco,
-            "status": v.status,
-            "valor_total": v.valor_total,
-            "created_at": v.created_at,
-            "items": items
-        })
-    return result
+    return vendas
+
 
 @app.get("/vendas/{venda_id}", response_model=VendaRead)
 def get_venda(venda_id: int, db: Session = Depends(get_db)):
-    v = db.query(Venda).filter(Venda.id == venda_id).first()
-    if not v:
+    venda = db.query(Venda).filter_by(id=venda_id).first()
+    if not venda:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
-    items = [
-        {
-            "produto_id": it.produto_id,
-            "nome": it.nome,
-            "quantidade": it.quantidade,
-            "valor_unit": it.valor_unit,
-            "subtotal": it.subtotal
-        } for it in v.items
-    ]
-    return {
-        "id": v.id,
-        "cliente": v.cliente,
-        "endereco": v.endereco,
-        "status": v.status,
-        "valor_total": v.valor_total,
-        "created_at": v.created_at,
-        "items": items
-    }
-
+    return venda
 @app.put("/vendas/{venda_id}", response_model=VendaRead)
 def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
     v = db.query(Venda).filter(Venda.id == venda_id).first()
@@ -389,59 +369,45 @@ def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
     if "status" in payload:
         v.status = payload["status"]
 
-    # allow updating quantities of items or replacing items list if provided
     if "items" in payload:
-        # remove old items
         db.query(VendaItem).filter(VendaItem.venda_id == v.id).delete()
         db.commit()
 
-        valor_total = 0.0
+        total = 0
         new_items = []
+
         for it in payload["items"]:
-            produto = db.query(Produto).filter(Produto.id == it["produto_id"]).first()
-            if not produto:
-                raise HTTPException(status_code=404, detail=f"Produto id {it['produto_id']} não encontrado")
-            quantidade = max(1, int(it.get("quantidade", 1)))
-            subtotal = produto.valor * quantidade
-            valor_total += subtotal
-            vi = VendaItem(
-                venda_id=v.id,
-                produto_id=produto.id,
-                nome=f"{produto.marca} - {produto.sabor}",
-                quantidade=quantidade,
-                valor_unit=produto.valor,
-                subtotal=subtotal
+            prod = db.query(Produto).filter(Produto.id == it["produto_id"]).first()
+            if not prod:
+                raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+            qty = max(1, it.get("quantidade", 1))
+            subtotal = prod.valor * qty
+            total += subtotal
+
+            new_items.append(
+                VendaItem(
+                    venda_id=v.id,
+                    produto_id=prod.id,
+                    nome=f"{prod.marca} - {prod.sabor}",
+                    quantidade=qty,
+                    valor_unit=prod.valor,
+                    subtotal=subtotal
+                )
             )
-            new_items.append(vi)
+
         db.add_all(new_items)
-        v.valor_total = valor_total
+        v.valor_total = total
 
     db.commit()
     db.refresh(v)
-    items = [
-        {
-            "produto_id": it.produto_id,
-            "nome": it.nome,
-            "quantidade": it.quantidade,
-            "valor_unit": it.valor_unit,
-            "subtotal": it.subtotal
-        } for it in v.items
-    ]
-    return {
-        "id": v.id,
-        "cliente": v.cliente,
-        "endereco": v.endereco,
-        "status": v.status,
-        "valor_total": v.valor_total,
-        "created_at": v.created_at,
-        "items": items
-    }
+    return v
+
 
 @app.delete("/vendas/{venda_id}", status_code=204)
 def delete_venda(venda_id: int, db: Session = Depends(get_db)):
-    v = db.query(Venda).filter(Venda.id == venda_id).first()
+    v = db.query(Venda).filter_by(id=venda_id).first()
     if not v:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     db.delete(v)
     db.commit()
-    return None

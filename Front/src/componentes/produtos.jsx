@@ -16,10 +16,10 @@ export default function Produtos({ screen }) {
     sabor: "",
     lote: "",
     validade: "",
-    valor: "",       // 🔥 NOVO CAMPO
+    valor: "",
+    quantidade: "",      // 🔥 ADICIONADO
   });
 
-  // Carregar produtos
   useEffect(() => {
     async function fetchProdutos() {
       try {
@@ -35,12 +35,10 @@ export default function Produtos({ screen }) {
     fetchProdutos();
   }, []);
 
-  // Atualizar campos
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  // Criar ou editar produto
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -49,7 +47,8 @@ export default function Produtos({ screen }) {
       sabor: formData.sabor,
       lote: Number(formData.lote),
       validade: formData.validade,
-      valor: Number(formData.valor),     // 🔥 ENVIAR VALOR
+      valor: Number(formData.valor),
+      quantidade: Number(formData.quantidade), // 🔥 ENVIANDO
     };
 
     if (isEditing) {
@@ -62,9 +61,7 @@ export default function Produtos({ screen }) {
 
         const updated = await response.json();
 
-        setProdutos(
-          produtos.map((p) => (p.id === editId ? updated : p))
-        );
+        setProdutos(produtos.map((p) => (p.id === editId ? updated : p)));
       } catch (error) {
         console.error("Erro ao editar produto:", error);
       }
@@ -75,7 +72,7 @@ export default function Produtos({ screen }) {
       return;
     }
 
-    // Criar produto
+    // Criar
     try {
       const response = await fetch(`${API_BASE}/produtos`, {
         method: "POST",
@@ -86,20 +83,19 @@ export default function Produtos({ screen }) {
       const newProduct = await response.json();
       setProdutos([...produtos, newProduct]);
       setShowForm(false);
-
     } catch (error) {
       console.error("Erro ao adicionar produto:", error);
     }
   }
 
-  // Editar
   function handleEdit(produto) {
     setFormData({
       marca: produto.marca,
       sabor: produto.sabor,
       lote: produto.lote,
       validade: produto.validade,
-      valor: produto.valor,  // 🔥 JÁ VEM DO BACKEND
+      valor: produto.valor,
+      quantidade: produto.quantidade,     // 🔥 EDITAR QUANTIDADE
     });
 
     setIsEditing(true);
@@ -107,20 +103,15 @@ export default function Produtos({ screen }) {
     setShowForm(true);
   }
 
-  // Excluir
   async function handleDelete(id) {
     try {
-      await fetch(`${API_BASE}/produtos/${id}`, {
-        method: "DELETE",
-      });
-
+      await fetch(`${API_BASE}/produtos/${id}`, { method: "DELETE" });
       setProdutos(produtos.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
     }
   }
 
-  // Formatar validade
   const formatDate = (isoString) => {
     if (!isoString) return "—";
     return new Date(isoString).toLocaleDateString("pt-BR");
@@ -128,114 +119,130 @@ export default function Produtos({ screen }) {
 
   return (
     <>
-    <Header/>
-    <section
-      id="products"
-      className={`screen ${screen === "products" ? "show" : ""}`}
-    >
-      <div className="drip"></div>
-
-      <div
-        className="card"
-        style={{ height: "100%", display: "flex", flexDirection: "column" }}
+      <Header />
+      <section
+        id="products"
+        className={`screen ${screen === "products" ? "show" : ""}`}
       >
-        
-        
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <h2 style={{ margin: 0, color: "var(--brown)" }}>Cadastro de Produtos</h2>
-            <div style={{ color: "rgba(107,63,63,0.6)" }}>
-              Gerencie insumos e novos lotes
+        <div className="drip"></div>
+
+        <div
+          className="card"
+          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        >
+          <div
+            style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+          >
+            <div>
+              <h2 style={{ margin: 0, color: "var(--brown)" }}>Cadastro de Produtos</h2>
+              <div style={{ color: "rgba(107,63,63,0.6)" }}>
+                Gerencie insumos e novos lotes
+              </div>
             </div>
+
+            <button
+              className="btn"
+              onClick={() => {
+                setShowForm(true);
+                setIsEditing(false);
+                setFormData({
+                  marca: "",
+                  sabor: "",
+                  lote: "",
+                  validade: "",
+                  valor: "",
+                  quantidade: "",   // 🔥 RESET
+                });
+              }}
+            >
+              + Novo Produto
+            </button>
           </div>
 
-          <button
-            className="btn"
-            onClick={() => {
-              setShowForm(true);
-              setIsEditing(false);
-              setFormData({ marca: "", sabor: "", lote: "", validade: "", valor: "" });
-            }}
-          >
-            + Novo Produto
-          </button>
-        </div>
+          {showForm && (
+            <form
+              onSubmit={handleSubmit}
+              className="card"
+              style={{
+                marginTop: "16px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+              }}
+            >
+              <label>Marca</label>
+              <input name="marca" onChange={handleChange} value={formData.marca} required />
 
-        {/* FORM */}
-        {showForm && (
-          <form
-            onSubmit={handleSubmit}
-            className="card"
-            style={{
-              marginTop: "16px",
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-            }}
-          >
-            <label>Marca</label>
-            <input name="marca" onChange={handleChange} value={formData.marca} required />
+              <label>Sabor</label>
+              <input name="sabor" onChange={handleChange} value={formData.sabor} required />
 
-            <label>Sabor</label>
-            <input name="sabor" onChange={handleChange} value={formData.sabor} required />
+              <label>Lote</label>
+              <input name="lote" type="number" onChange={handleChange} value={formData.lote} required />
 
-            <label>Lote</label>
-            <input name="lote" type="number" onChange={handleChange} value={formData.lote} required />
+              <label>Validade</label>
+              <input name="validade" type="date" onChange={handleChange} value={formData.validade} required />
 
-            <label>Validade</label>
-            <input name="validade" type="date" onChange={handleChange} value={formData.validade} required />
+              <label>Valor (R$)</label>
+              <input name="valor" type="number" step="0.01" onChange={handleChange} value={formData.valor} required />
 
-            {/* 🔥 NOVO CAMPO */}
-            <label>Valor (R$)</label>
-            <input name="valor" type="number" step="0.01" onChange={handleChange} value={formData.valor} required />
+              {/* 🔥 NOVO CAMPO DE QUANTIDADE */}
+              <label>Quantidade</label>
+              <input
+                name="quantidade"
+                type="number"
+                min="1"
+                onChange={handleChange}
+                value={formData.quantidade}
+                required
+              />
 
-            <button className="btn" type="submit">
-              {isEditing ? "Salvar Alterações" : "Salvar"}
-            </button>
-          </form>
-        )}
+              <button className="btn" type="submit">
+                {isEditing ? "Salvar Alterações" : "Salvar"}
+              </button>
+            </form>
+          )}
 
-        {/* LISTAGEM */}
-        <div style={{ marginTop: "18px", flex: 1, overflow: "auto" }}>
-          <div className="table">
-            {loading && (
-              <div style={{ padding: "20px", color: "gray" }}>
-                Carregando produtos...
-              </div>
-            )}
+          <div style={{ marginTop: "18px", flex: 1, overflow: "auto" }}>
+            <div className="table">
+              {loading && (
+                <div style={{ padding: "20px", color: "gray" }}>
+                  Carregando produtos...
+                </div>
+              )}
 
-            {!loading && produtos.length === 0 && (
-              <div style={{ padding: "20px", color: "gray" }}>
-                Nenhum produto cadastrado.
-              </div>
-            )}
+              {!loading && produtos.length === 0 && (
+                <div style={{ padding: "20px", color: "gray" }}>
+                  Nenhum produto cadastrado.
+                </div>
+              )}
 
-            {!loading &&
-              produtos.map((p) => (
-                <div className="item" key={p.id}>
-                  <div>
-                    <strong>{p.marca}</strong>
-                    <div style={{ fontSize: "13px", color: "rgba(107,63,63,0.6)" }}>
-                      {p.sabor} — Lote {p.lote}
-                      <br />
-                      Validade: {formatDate(p.validade)}
-                      <br />
-                      <strong>Valor: R$ {p.valor.toFixed(2)}</strong> {/* 🔥 NOVO CAMPO NA LISTA */}
+              {!loading &&
+                produtos.map((p) => (
+                  <div className="item" key={p.id}>
+                    <div>
+                      <strong>{p.marca}</strong>
+                      <div style={{ fontSize: "13px", color: "rgba(107,63,63,0.6)" }}>
+                        {p.sabor} — Lote {p.lote}
+                        <br />
+                        Validade: {formatDate(p.validade)}
+                        <br />
+                        <strong>Valor: R$ {p.valor.toFixed(2)}</strong>
+                        <br />
+                        Quantidade: {p.quantidade} {/* 🔥 MOSTRA A QUANTIDADE */}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button className="btn small" onClick={() => handleEdit(p)}>Editar</button>
+                      <button className="btn small danger" onClick={() => handleDelete(p.id)}>Excluir</button>
                     </div>
                   </div>
-
-                  {/* BOTÕES */}
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <button className="btn small" onClick={() => handleEdit(p)}>Editar</button>
-                    <button className="btn small danger" onClick={() => handleDelete(p.id)}>Excluir</button>
-                  </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }

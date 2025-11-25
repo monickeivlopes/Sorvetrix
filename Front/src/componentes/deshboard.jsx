@@ -313,12 +313,12 @@ export default function Dashboard() {
                     }}
                   >
                     <div className="card">
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div>
+                      <div className="relatorios-content">
+                        <div className="relatorios">
                           Relatórios rápidos <br />
                           <small style={{ color: "rgba(0,0,0,0.6)" }}>Exportar / imprimir</small>
                         </div>
-                        <div style={{ display: "flex", gap: "8px" }}>
+                        <div className="relatorios">
                           <button onClick={exportCSV} className="btn-small">Exportar CSV</button>
                           <button onClick={printRelatorio} className="btn-small">Imprimir</button>
                         </div>
