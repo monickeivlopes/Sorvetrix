@@ -27,7 +27,8 @@
 
 
 #products.screen {
-  margin-left: 15%;
+  margin-left: 10%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -190,19 +191,13 @@
 
 
 
-/* Tablets */
-@media (max-width: 1024px) {
-  #products.screen {
-    margin-left: 0;
-    padding: 18px;
-  }
-}
+
 
 /* MOBILE */
 @media (max-width: 720px) {
 
   #products.screen {
-    margin-left: 0;
+   
     padding: 16px;
   }
 

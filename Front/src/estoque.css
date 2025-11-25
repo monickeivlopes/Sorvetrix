@@ -18,14 +18,12 @@
   box-sizing: border-box;
 }
 
-#root {
-  width: 100%;
-}
+
 
 
 #stock.screen {
-  width: 100%;
-  margin-left: 15%;
+  width: 800%;
+  margin-left: 10%;
   position: relative;
   padding: 28px;
   background: linear-gradient(180deg, #fdefdb, #ffe6e9);

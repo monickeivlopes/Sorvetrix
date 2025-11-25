@@ -12,7 +12,7 @@ export default function Stocks({ screen }) {
 
   const fetchProdutos = async () => {
     try {
-      const response = await fetch("http://localhost:8080/produtos");
+      const response = await fetch("http://localhost:8000/produtos");
       const data = await response.json();
       setProdutos(data);
 
@@ -23,7 +23,7 @@ export default function Stocks({ screen }) {
           marca: p.marca,
           sabor: p.sabor,
           lote: p.lote,
-          validade: p.validade,
+          validade: p.validade ? p.validade.split("T")[0] : "",
           valor: p.valor,
           quantidade: p.quantidade ?? 1, 
         };

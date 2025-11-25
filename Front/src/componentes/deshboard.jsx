@@ -11,7 +11,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function Dashboard() {
-  const API_BASE = "http://localhost:8080";
+  const API_BASE = "http://localhost:8000";
 
   const [screen, setScreen] = useState("dashboard");
 

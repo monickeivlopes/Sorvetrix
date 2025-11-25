@@ -4,7 +4,7 @@ import "../pedidos.css";
 import Footer from "./footer";
 
 export default function Pedidos({ screen }) {
-  const API_BASE = "http://localhost:8080";
+  const API_BASE = "http://localhost:8000";
 
   const [produtos, setProdutos] = useState([]);
   const [pedidos, setPedidos] = useState([]);

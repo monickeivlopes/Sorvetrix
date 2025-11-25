@@ -14,22 +14,22 @@
 }
 
 .header {
-  width: 100%;
+  width: 80%;
   height: 10%;
   padding: 16px 28px;
   margin-bottom: 20px;
-  
+   margin-left: 10%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .brand {
-  width: 80%;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: 15%;
+ 
 }
 
 

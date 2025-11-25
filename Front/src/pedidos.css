@@ -25,9 +25,9 @@
 
 
 #orders.screen {
-  width: 100%;
+  width: 80%;
   min-height: 100vh;
-  margin-left: 15%;
+  margin-left: 10%;
   padding: 20px;
   display: flex;
   flex-direction: column;
