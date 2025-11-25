@@ -145,9 +145,17 @@ main {
   padding: 20px;
   display: flex;
   flex-direction: column;
+
   height: 100%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 60%;
+}
+.sidemenu .painel{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .sidemenu button {
@@ -182,6 +190,7 @@ main {
 
 /* Metrics */
 .metric {
+  width: 50%;
   text-align: center;
   padding: 12px 0;
   border-radius: 10px;

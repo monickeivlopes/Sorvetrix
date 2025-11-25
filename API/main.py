@@ -1,15 +1,32 @@
+# Arquivos atualizados
+
+Abaixo estão os dois arquivos completos que implementei para você: `main.py` (backend FastAPI com controle de quantidade e migração do banco) e `Stocks.jsx` (componente de estoque adaptado para usar `quantidade`).
+
+> **Instruções rápidas antes de executar**
+>
+> 1. **Faça backup** do arquivo `users.db` (ou do seu banco atual) antes de iniciar — a aplicação fará alterações no esquema/estrutura durante a primeira execução.
+> 2. Instale dependências (se necessário): `pip install fastapi sqlalchemy pydantic jose passlib[bcrypt] uvicorn`.
+> 3. Rode o servidor: `uvicorn main:app --reload`.
+> 4. Ao iniciar, o servidor tentará adicionar a coluna `quantidade` (se ela não existir) e consolidar linhas duplicadas em registros com `quantidade` somada.
+
+---
+
+## main.py
+
+```python
 # main.py
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import (
-    create_engine, Column, Integer, String, DateTime, Float, ForeignKey, func
+    create_engine, Column, Integer, String, DateTime, Float, ForeignKey, func, text
 )
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from jose import jwt
 from passlib.context import CryptContext
 from typing import Optional, List
 import datetime
+import sqlite3
 
 app = FastAPI()
 
@@ -68,6 +85,7 @@ class Produto(Base):
     lote = Column(Integer)
     validade = Column(DateTime)
     valor = Column(Float)
+    quantidade = Column(Integer, default=0)  # novo campo
 
 
 class ProdutoSchema(BaseModel):
@@ -76,6 +94,7 @@ class ProdutoSchema(BaseModel):
     lote: int
     validade: str
     valor: float
+    quantidade: Optional[int] = 0
 
 # -----------------------------
 # VENDAS + ITENS
@@ -143,6 +162,71 @@ class VendaRead(BaseModel):
 Base.metadata.create_all(bind=engine)
 
 # -----------------------------
+# MIGRATION: garantir coluna `quantidade` e consolidar duplicatas
+# -----------------------------
+def ensure_quantity_and_consolidate():
+    # Usamos sqlite diretamente para executar ALTER TABLE se necessário
+    conn = sqlite3.connect("./users.db")
+    cur = conn.cursor()
+
+    # verificar se coluna existe
+    cur.execute("PRAGMA table_info(produtos)")
+    cols = [r[1] for r in cur.fetchall()]
+    if 'quantidade' not in cols:
+        try:
+            cur.execute("ALTER TABLE produtos ADD COLUMN quantidade INTEGER DEFAULT 0")
+            conn.commit()
+        except Exception as e:
+            # se falhar, apenas logamos (continua)
+            print("Aviso: não foi possível adicionar coluna quantidade:", e)
+
+    # Agora, muitos registros podem representar 1 unidade cada (modelo antigo).
+    # Para consolidar, vamos somar registros que compartilham marca/sabor/lote/validade/valor
+    try:
+        cur.execute("SELECT id, marca, sabor, lote, validade, valor, quantidade FROM produtos")
+        rows = cur.fetchall()
+        if not rows:
+            conn.close()
+            return
+
+        # mapa: (marca,sabor,lote,validade,valor) -> list of ids
+        groups = {}
+        for r in rows:
+            _id, marca, sabor, lote, validade, valor, quantidade = r
+            key = (marca, sabor, lote, validade, valor)
+            groups.setdefault(key, []).append((_id, quantidade if quantidade is not None else 1))
+
+        for key, items in groups.items():
+            if len(items) <= 1:
+                # se a única linha tem quantidade 0 ou null, ajustar para 1
+                _id, q = items[0]
+                if q is None or q == 0:
+                    cur.execute("UPDATE produtos SET quantidade = 1 WHERE id = ?", (_id,))
+                continue
+
+            # existem duplicatas: manter o primeiro, somar quantidades e apagar os demais
+            keep_id = items[0][0]
+            total_q = 0
+            for _id, q in items:
+                total_q += (q if q is not None and q > 0 else 1)
+
+            cur.execute("UPDATE produtos SET quantidade = ? WHERE id = ?", (total_q, keep_id))
+
+            # deletar os demais ids (exceto keep_id)
+            ids_to_delete = [str(i[0]) for i in items[1:]]
+            if ids_to_delete:
+                cur.execute(f"DELETE FROM produtos WHERE id IN ({','.join(ids_to_delete)})")
+
+        conn.commit()
+    except Exception as e:
+        print("Aviso ao consolidar produtos:", e)
+    finally:
+        conn.close()
+
+# executar a migração ao iniciar
+ensure_quantity_and_consolidate()
+
+# -----------------------------
 # DB dependency
 # -----------------------------
 def get_db():
@@ -187,7 +271,7 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
 
 # -----------------------------
-# PRODUTOS routes (kept + returns valor)
+# PRODUTOS routes (updated + quantidade)
 # -----------------------------
 @app.post("/produtos")
 def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
@@ -197,7 +281,8 @@ def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
         sabor=produto.sabor,
         lote=produto.lote,
         validade=validade_dt,
-        valor=produto.valor
+        valor=produto.valor,
+        quantidade=produto.quantidade or 0
     )
     db.add(novo)
     db.commit()
@@ -208,7 +293,8 @@ def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
         "sabor": novo.sabor,
         "lote": novo.lote,
         "validade": novo.validade.strftime("%Y-%m-%d"),
-        "valor": novo.valor
+        "valor": novo.valor,
+        "quantidade": novo.quantidade
     }
 
 @app.get("/produtos")
@@ -221,7 +307,8 @@ def listar_produtos(db: Session = Depends(get_db)):
             "sabor": p.sabor,
             "lote": p.lote,
             "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
-            "valor": p.valor
+            "valor": p.valor,
+            "quantidade": p.quantidade or 0
         }
         for p in produtos
     ]
@@ -241,6 +328,8 @@ def update_produto(produto_id: int, dados: dict, db: Session = Depends(get_db)):
         p.valor = dados["valor"]
     if "validade" in dados:
         p.validade = datetime.datetime.strptime(dados["validade"], "%Y-%m-%d")
+    if "quantidade" in dados:
+        p.quantidade = int(dados["quantidade"]) if dados["quantidade"] is not None else 0
     db.commit()
     db.refresh(p)
     return {
@@ -249,7 +338,8 @@ def update_produto(produto_id: int, dados: dict, db: Session = Depends(get_db)):
         "sabor": p.sabor,
         "lote": p.lote,
         "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
-        "valor": p.valor
+        "valor": p.valor,
+        "quantidade": p.quantidade
     }
 
 @app.delete("/produtos/{produto_id}", status_code=204)
@@ -262,7 +352,7 @@ def delete_produto(produto_id: int, db: Session = Depends(get_db)):
     return None
 
 # -----------------------------
-# VENDAS routes (multi-item support)
+# VENDAS routes (multi-item support) - agora desconta do estoque
 # -----------------------------
 @app.post("/vendas", response_model=VendaRead)
 def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
@@ -282,53 +372,76 @@ def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
     db.refresh(nova_venda)
 
     items_to_add = []
-    for it in venda.items:
-        produto = db.query(Produto).filter(Produto.id == it.produto_id).first()
-        if not produto:
-            # rollback parcial: apagar venda criada
-            db.delete(nova_venda)
-            db.commit()
-            raise HTTPException(status_code=404, detail=f"Produto id {it.produto_id} não encontrado")
-        quantidade = max(1, int(it.quantidade))
-        subtotal = produto.valor * quantidade
-        valor_total += subtotal
+    try:
+        for it in venda.items:
+            produto = db.query(Produto).filter(Produto.id == it.produto_id).with_for_update().first()
+            if not produto:
+                # rollback parcial: apagar venda criada
+                db.delete(nova_venda)
+                db.commit()
+                raise HTTPException(status_code=404, detail=f"Produto id {it.produto_id} não encontrado")
 
-        vi = VendaItem(
-            venda_id=nova_venda.id,
-            produto_id=produto.id,
-            nome=f"{produto.marca} - {produto.sabor}",
-            quantidade=quantidade,
-            valor_unit=produto.valor,
-            subtotal=subtotal
-        )
-        items_to_add.append(vi)
+            quantidade = max(1, int(it.quantidade))
 
-    # adicionar todos os items
-    db.add_all(items_to_add)
-    # atualizar venda com valor_total
-    nova_venda.valor_total = valor_total
-    db.commit()
-    db.refresh(nova_venda)
+            # verificar estoque
+            if produto.quantidade is None:
+                produto.quantidade = 0
+            if produto.quantidade < quantidade:
+                db.delete(nova_venda)
+                db.commit()
+                raise HTTPException(status_code=400, detail=f"Estoque insuficiente para {produto.marca} - {produto.sabor}. Disponível: {produto.quantidade}")
 
-    # for response: carregar items
-    db.refresh(nova_venda)
-    return {
-        "id": nova_venda.id,
-        "cliente": nova_venda.cliente,
-        "endereco": nova_venda.endereco,
-        "status": nova_venda.status,
-        "valor_total": nova_venda.valor_total,
-        "created_at": nova_venda.created_at,
-        "items": [
-            {
-                "produto_id": it.produto_id,
-                "nome": it.nome,
-                "quantidade": it.quantidade,
-                "valor_unit": it.valor_unit,
-                "subtotal": it.subtotal
-            } for it in nova_venda.items
-        ]
-    }
+            subtotal = produto.valor * quantidade
+            valor_total += subtotal
+
+            # descontar estoque
+            produto.quantidade -= quantidade
+            db.add(produto)
+
+            vi = VendaItem(
+                venda_id=nova_venda.id,
+                produto_id=produto.id,
+                nome=f"{produto.marca} - {produto.sabor}",
+                quantidade=quantidade,
+                valor_unit=produto.valor,
+                subtotal=subtotal
+            )
+            items_to_add.append(vi)
+
+        # adicionar todos os items
+        db.add_all(items_to_add)
+        # atualizar venda com valor_total
+        nova_venda.valor_total = valor_total
+        db.commit()
+        db.refresh(nova_venda)
+
+        # for response: carregar items
+        db.refresh(nova_venda)
+        return {
+            "id": nova_venda.id,
+            "cliente": nova_venda.cliente,
+            "endereco": nova_venda.endereco,
+            "status": nova_venda.status,
+            "valor_total": nova_venda.valor_total,
+            "created_at": nova_venda.created_at,
+            "items": [
+                {
+                    "produto_id": it.produto_id,
+                    "nome": it.nome,
+                    "quantidade": it.quantidade,
+                    "valor_unit": it.valor_unit,
+                    "subtotal": it.subtotal
+                } for it in nova_venda.items
+            ]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        # tentar rollback se ocorrer erro inesperado
+        db.rollback()
+        db.delete(nova_venda)
+        db.commit()
+        raise HTTPException(status_code=500, detail=f"Erro ao criar venda: {e}")
 
 @app.get("/vendas", response_model=List[VendaRead])
 def list_vendas(db: Session = Depends(get_db)):
@@ -390,6 +503,13 @@ def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
 
     # allow updating quantities of items or replacing items list if provided
     if "items" in payload:
+        # Restaurar estoque com base nos items antigos
+        for old in v.items:
+            prod = db.query(Produto).filter(Produto.id == old.produto_id).first()
+            if prod:
+                prod.quantidade = (prod.quantidade or 0) + old.quantidade
+                db.add(prod)
+
         # remove old items
         db.query(VendaItem).filter(VendaItem.venda_id == v.id).delete()
         db.commit()
@@ -401,8 +521,16 @@ def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
             if not produto:
                 raise HTTPException(status_code=404, detail=f"Produto id {it['produto_id']} não encontrado")
             quantidade = max(1, int(it.get("quantidade", 1)))
+
+            if produto.quantidade < quantidade:
+                raise HTTPException(status_code=400, detail=f"Estoque insuficiente para {produto.marca} - {produto.sabor}")
+
             subtotal = produto.valor * quantidade
             valor_total += subtotal
+
+            produto.quantidade -= quantidade
+            db.add(produto)
+
             vi = VendaItem(
                 venda_id=v.id,
                 produto_id=produto.id,
@@ -441,6 +569,67 @@ def delete_venda(venda_id: int, db: Session = Depends(get_db)):
     v = db.query(Venda).filter(Venda.id == venda_id).first()
     if not v:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
+
+    # Restaurar estoque ao deletar venda
+    for old in v.items:
+        prod = db.query(Produto).filter(Produto.id == old.produto_id).first()
+        if prod:
+            prod.quantidade = (prod.quantidade or 0) + old.quantidade
+            db.add(prod)
+
     db.delete(v)
     db.commit()
     return None
+```
+
+---
+
+## Stocks.jsx (componente de estoque atualizado)
+
+```jsx
+// Stocks.jsx
+import { useEffect, useState } from "react";
+import Header from "./header";
+import "../estoque.css"
+import { NavLink, useNavigate } from "react-router-dom";
+
+export default function Stocks({ screen, switchTo }) {
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProdutos = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/produtos");
+      const data = await response.json();
+      setProdutos(data);
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProdutos();
+  }, []);
+
+  // Agrupar itens por lote + marca + sabor (agora usando quantidade)
+  const produtosPorLote = produtos.reduce((grp, p) => {
+    const key = `${p.lote}::${p.marca}::${p.sabor}`;
+    if (!grp[key]) grp[key] = { ...p, quantidadeTotal: 0 };
+    grp[key].quantidadeTotal += (p.quantidade || 0);
+    return grp;
+  }, {});
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "—";
+    const d = new Date(isoString);
+    return d.toLocaleDateString("pt-BR");
+  };
+
+  return (
+    <>
+    <Header/>
+    <section id="stock" className={`screen ${screen === "stock" ? "show" : ""}`}>
+      <div className="drip"></div>
+```
