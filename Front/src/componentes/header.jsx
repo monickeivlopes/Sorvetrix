@@ -1,9 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import "../style.css";
+import "../header.css"; // <-- CSS separado
 
 export default function Header() {
   const navigate = useNavigate();
-  const isLogged = localStorage.getItem("token"); // <-- verifica login
+  const isLogged = localStorage.getItem("token"); 
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -13,75 +13,34 @@ export default function Header() {
   }
 
   return (
-    <header>
+    <header className="header">
       <div className="brand">
-        <div className="logo">
+        <NavLink to="/dashboard" className="logo">
           <img src="logo.png" alt="imagem" />
-        </div>
+        </NavLink>
 
-        <div>
-          <div
-            style={{
-              fontWeight: 800,
-              fontSize: "18px",
-              color: "var(--brown)",
-            }}
-          >
-            Sorvetrix
-          </div>
-          <div
-            style={{
-              fontSize: "12px",
-              color: "rgba(107,63,63,0.7)",
-            }}
-          >
-            Sistema de Gerenciamento
-          </div>
+        <div className="title-box">
+          <div className="title-main">Sorvetrix</div>
+          <div className="title-sub">Sistema de Gerenciamento</div>
         </div>
       </div>
 
-      {/* Só aparece se o usuário estiver logado */}
       {isLogged && (
-        <nav id="nav">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
+        <nav className="nav">
+          <NavLink to="/dashboard" className="link">
             Dashboard
           </NavLink>
-          <NavLink
-            to="/estoque"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
+          <NavLink to="/estoque" className="link">
             Estoque
           </NavLink>
-          <NavLink
-            to="/produtos"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
+          <NavLink to="/produtos" className="link">
             Produtos
           </NavLink>
-          <NavLink
-            to="/pedidos"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
+          <NavLink to="/pedidos" className="link">
             Pedidos
           </NavLink>
 
-          <button
-            onClick={handleLogout}
-            className="logout-btn"
-            style={{
-              marginLeft: "20px",
-              padding: "3px 12px",
-              borderRadius: "6px",
-              background: "var(--brown)",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "14px",
-            }}
-          >
+          <button onClick={handleLogout} className="logout-btn">
             Sair
           </button>
         </nav>

@@ -1,0 +1,278 @@
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+:root {
+  --mint: #c2ffd9;
+  --yellow: #ffcd5c;
+  --blue: #8edbe6;
+  --pink: #f38fc5;
+  --cream: #fdefdb;
+  --pink-light: ##D2B48C;
+  --brown: #7b4b36;
+  --card: #FFDDA9;
+  --accent: #ffe6e9;
+  --pink-strong: #f90989;
+  --pink-test: #f0208f;
+}
+
+/* =========================================================
+   GLOBAL RESET & BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+ 
+}
+
+html, body {
+  width: 80%;
+  height: 100%;
+  margin-left: 8%;
+  display: flex;
+  justify-content: center;
+  background: #ffe6e9;
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto;
+  color: #6b3f3f;
+}
+
+#root {
+  width: 100%;
+  
+}
+
+/* =========================================================
+   APP STRUCTURE
+========================================================= */
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  width: 100%;
+  height: 10%;
+  padding: 16px 28px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Logo */
+.logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+}
+
+nav button {
+  padding: 8px 12px;
+  background: transparent;
+  border: 2px solid rgba(123,75,54,0.06);
+  border-radius: 12px;
+  color: var(--brown);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+nav a {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--pink-test);
+}
+
+nav a:hover {
+  color: var(--pink-light);
+ 
+}
+
+/* =========================================================
+   MAIN & GENERAL LAYOUTS
+========================================================= */
+main {
+  flex: 1;
+  padding: 24px;
+  gap: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.screen {
+  width: 100%;
+  max-width: 1200px;
+  padding: 28px;
+  overflow: auto;
+  background: #fdefdb;
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+
+/* ================================
+   Dashboard Custom Styles
+   ================================ */
+
+/* Sidebar */
+.sidemenu {
+  background: #fffdef;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 60%;
+}
+
+.sidemenu button {
+  border: none;
+  background: none;
+  padding: 10px 0;
+  font-weight: 600;
+  color: var(--brown);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidemenu button.active,
+.sidemenu button:hover {
+  color: var(--pink);
+}
+
+/* Cards */
+.card {
+  background: #fffdef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Metrics */
+.metric {
+  text-align: center;
+  padding: 12px 0;
+  border-radius: 10px;
+}
+
+.big {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Donut chart box */
+.donut-box {
+  background: #fffdef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 14px;
+  color: rgba(107, 63, 63, 0.6);
+}
+
+/* Layout */
+.grid {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+/* Donut placeholder */
+.donut {
+  width: 100%;
+  height: 150px;
+  background: #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #6c757d;
+  font-weight: bold;
+}
+
+/* Drip effect */
+.drip {
+  height: 6px;
+  background: var(--pink);
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments using Bootstrap classes */
+@media (max-width: 992px) {
+  .grid {
+    flex-direction: column;
+  }
+
+  .donut-box,
+  .metric {
+    width: 100%;
+  }
+}
+
+/* Inputs and forms (caso futuramente use) */
+input.form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+}
+
+input.form-control:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 0.2rem rgba(243, 143, 197, 0.25);
+}
+
+/* Buttons */
+button.btn {
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+button.btn-primary {
+  background-color: var(--pink);
+  border-color: var(--pink);
+}
+
+button.btn-primary:hover {
+  background-color: #f36aa1;
+  border-color: #f36aa1;
+}

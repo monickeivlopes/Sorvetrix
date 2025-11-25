@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "./header";
+import "../estoque.css"
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Stocks({ screen, switchTo }) {
   const [produtos, setProdutos] = useState([]);
@@ -42,7 +44,7 @@ export default function Stocks({ screen, switchTo }) {
 
       <div className="card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
 
-        <Header/>
+        
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h2 style={{ margin: 0, color: "var(--brown)" }}>Gerenciamento de Estoque</h2>
@@ -54,7 +56,9 @@ export default function Stocks({ screen, switchTo }) {
               ✎ Editar Estoque
             </button>
 
-            <button className="ghost" onClick={() => switchTo("dashboard")}>Voltar</button>
+            <NavLink to="/" className="link">
+            <button className="ghost" >Voltar</button>
+          </NavLink>
           </div>
         </div>
 

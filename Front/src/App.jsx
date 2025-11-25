@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import Dashboard from "./componentes/index";
+import Dashboard from "./componentes/deshboard";
 import Orders from "./componentes/pedidos";
 import Stocks from "./componentes/estoque";
 import Produtos from "./componentes/produtos";

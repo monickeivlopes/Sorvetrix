@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./header";
+import "../pedidos.css"
 
 export default function Pedidos() {
   const API_BASE = "http://localhost:8000";
@@ -210,9 +211,9 @@ export default function Pedidos() {
             onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
           />
 
-          <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn" onClick={handleSubmit}>Finalizar Pedido</button>
-            <button className="ghost" onClick={() => setFormData({ cliente: "", endereco: "", items: [] })}>
+          <div style={{ display: "flex", gap: 8}}>
+            <button className="btn"  onClick={handleSubmit}>Finalizar Pedido</button>
+            <button className="ghost" style={{backgroundColor:"#ff4f4f",color:"white"}} onClick={() => setFormData({ cliente: "", endereco: "", items: [] })}>
               Limpar
             </button>
           </div>
@@ -273,7 +274,7 @@ export default function Pedidos() {
                     <button className="small" onClick={() => alterarStatus(order.id, "Finalizado")}>Finalizado</button>
 
                     <button
-                      style={{ backgroundColor: "#f90989", color: "white" }}
+                      style={{ backgroundColor: "#ff6b6b", color: "white" }}
                       className="small danger"
                       onClick={() => excluirPedido(order.id)}
                     >

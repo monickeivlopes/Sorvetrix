@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../style.css";
+import "../produtos.css";
 import Header from "./header";
 
 export default function Produtos({ screen }) {
@@ -140,7 +140,7 @@ export default function Produtos({ screen }) {
         style={{ height: "100%", display: "flex", flexDirection: "column" }}
       >
         
-        {/* HEADER */}
+        
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h2 style={{ margin: 0, color: "var(--brown)" }}>Cadastro de Produtos</h2>

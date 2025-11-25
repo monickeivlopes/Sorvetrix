@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../style.css";
+import "../login.css";
 import Header from "./header";
 
 export default function Login() {
@@ -97,14 +97,13 @@ export default function Login() {
                   marginTop: "15px",
                 }}
               >
-                <button
-                  className="btn"
-                  style={{ width: "100%", maxWidth: "200px", maxHeight:"40px"
-                   }}
+                <a
+                  
+                  
                   onClick={() => navigate("/register")}
                 >
                   Criar uma conta
-                </button>
+                </a>
               </div>
 
             </div>

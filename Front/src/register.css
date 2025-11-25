@@ -1,0 +1,206 @@
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+:root {
+  --mint: #c2ffd9;
+  --yellow: #ffcd5c;
+  --blue: #8edbe6;
+  --pink: #f38fc5;
+  --cream: #fdefdb;
+  --pink-light: ##D2B48C;
+  --brown: #7b4b36;
+  --card: #FFDDA9;
+  --accent: #ffe6e9;
+  --pink-strong: #f90989;
+  --pink-test: #f0208f;
+}
+
+/* =========================================================
+   GLOBAL RESET & BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+}
+
+
+
+#root {
+  width: 100%;
+}
+
+/* =========================================================
+   APP STRUCTURE
+========================================================= */
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  width: 100%;
+  height: 10%;
+  padding: 16px 28px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Logo */
+.logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+nav {
+  display: flex;
+  gap: 12px;
+}
+
+nav button {
+  padding: 8px 12px;
+  background: transparent;
+  border: 2px solid rgba(123,75,54,0.06);
+  border-radius: 12px;
+  color: var(--brown);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+nav a {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--pink-test);
+}
+
+nav a:hover {
+  color: var(--pink-light);
+}
+
+/* =========================================================
+   MAIN & GENERAL LAYOUTS
+========================================================= */
+main {
+  flex: 1;
+  padding: 24px;
+  gap: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+
+
+/* =========================================================
+   REGISTER PAGE STYLE
+========================================================= */
+
+#register.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#register .layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#register .card {
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+/* Título */
+#register h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--brown);
+  margin-bottom: 20px;
+}
+
+/* Labels */
+#register label {
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+/* Inputs */
+#register input {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  background: #fff;
+  border: 1px solid rgba(123,75,54,0.1);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+#register input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 6px rgba(243,143,197,0.4);
+}
+
+/* Botão Registrar */
+#register .btn {
+  width: 100%;
+  margin-top: 18px;
+  background: linear-gradient(180deg, var(--pink), var(--pink-light));
+  border-radius: 14px;
+  padding: 12px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 8px 20px rgba(243,143,197,0.22);
+  transition: 0.2s;
+}
+
+#register .btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 26px rgba(243,143,197,0.28);
+}
+
+/* Link "Já tem conta?" */
+#register p {
+  font-size: 14px;
+  color: var(--brown);
+  text-align: center;
+  margin-top: 14px;
+}
+
+#register p a {
+  color: var(--pink-test);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#register p a:hover {
+  color: var(--pink-strong);
+}
