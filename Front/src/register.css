@@ -134,7 +134,7 @@ main {
 #register .right.card > div {
   width: 100%;
 }
-#register .right.card > div input{
+#register .right.card > div input,select{
   width: 100%;
 }
 
@@ -145,7 +145,7 @@ main {
 }
 
 
-#register input {
+#register input, #register select {
   margin-top: 6px;
   margin-bottom: 14px;
   padding: 12px 14px;
