@@ -4,6 +4,11 @@ import Header from "./header";
 import Orders from "./pedidos";
 import Stocks from "./estoque";
 import Produtos from "./produtos";
+import Footer from "./footer";
+
+// ---- IMPORTAÇÃO PARA PDF ----
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function Dashboard() {
   const API_BASE = "http://localhost:8000";
@@ -16,11 +21,8 @@ export default function Dashboard() {
   const [vendasUltimos7diasTotal, setVendasUltimos7diasTotal] = useState(0.0);
   const [pedidosEmAndamento, setPedidosEmAndamento] = useState(0);
   const [estoqueBaixo, setEstoqueBaixo] = useState(0);
-  const [vendas, setVendas] = useState([]); // lista completa de vendas (para relatórios)
+  const [vendas, setVendas] = useState([]);
 
-  // ---------------------------
-  // CARREGAR DADOS DO BACKEND
-  // ---------------------------
   useEffect(() => {
     fetchVendas();
     fetchProdutos();
@@ -42,25 +44,21 @@ export default function Dashboard() {
 
       const hoje = new Date();
       const seteDiasAtras = new Date();
-      seteDiasAtras.setDate(hoje.getDate() - 6); // inclui hoje, total de 7 dias
+      seteDiasAtras.setDate(hoje.getDate() - 6);
 
       data.forEach(v => {
-        // created_at vem do backend como ISO string; garantir compatibilidade
         const created = new Date(v.created_at);
         const createdStr = created.toISOString().slice(0, 10);
 
-        // contagem de hoje
         if (createdStr === hojeStr) {
           countHoje++;
           totalHoje += Number(v.valor_total || 0);
         }
 
-        // total últimos 7 dias
         if (created >= new Date(seteDiasAtras.toISOString().slice(0, 10))) {
           total7dias += Number(v.valor_total || 0);
         }
 
-        // pedidos em andamento (filtra por status diferente de Concluído/Cancelado)
         if (v.status !== "Concluído" && v.status !== "Cancelado") andamento++;
       });
 
@@ -68,6 +66,7 @@ export default function Dashboard() {
       setVendasHojeTotal(totalHoje);
       setVendasUltimos7diasTotal(total7dias);
       setPedidosEmAndamento(andamento);
+
     } catch (error) {
       console.error("Erro ao buscar vendas:", error);
     }
@@ -79,19 +78,15 @@ export default function Dashboard() {
       const res = await fetch(`${API_BASE}/produtos`);
       const produtos = await res.json();
 
-      // aqui você pode definir o que é "estoque baixo"
-      // como você AINDA não tem estoque no backend,
-      // vamos usar "validade próxima"
       const hoje = new Date();
       const diasLimite = 5;
-
       let baixo = 0;
 
       produtos.forEach(p => {
         const validade = p.validade ? new Date(p.validade) : null;
         if (!validade) return;
-        const diff = (validade - hoje) / (1000 * 60 * 60 * 24);
 
+        const diff = (validade - hoje) / (1000 * 60 * 60 * 24);
         if (diff < diasLimite) baixo++;
       });
 
@@ -101,14 +96,13 @@ export default function Dashboard() {
     }
   }
 
-  // ---- EXPORTAR CSV (Relatórios rápidos) ----
+  // ---- EXPORTAR CSV ----
   function exportCSV() {
     if (!vendas || vendas.length === 0) {
       alert("Sem vendas para exportar");
       return;
     }
 
-    // Cabeçalho
     const header = [
       "id",
       "cliente",
@@ -122,10 +116,10 @@ export default function Dashboard() {
 
     const rows = vendas.map(v => {
       const itemsCount = v.items ? v.items.length : 0;
-      // items_descricao: "produto_id:x|nome:y|qtd:z;..."
       const itemsDesc = (v.items || [])
         .map(it => `(${it.produto_id} - ${it.nome} x${it.quantidade} R$${Number(it.valor_unit).toFixed(2)})`)
         .join(" ; ");
+
       return [
         v.id,
         escapeCSV(v.cliente || ""),
@@ -153,14 +147,65 @@ export default function Dashboard() {
 
   function escapeCSV(value) {
     if (typeof value !== "string") return value;
-    // encapsula em aspas se necessário e escapa aspas internas
     if (value.includes(",") || value.includes("\n") || value.includes('"')) {
       return `"${value.replace(/"/g, '""')}"`;
     }
     return value;
   }
 
-  // ---- IMPRIMIR RELATÓRIO / GERAR "PDF" via print ----
+  // ---- EXPORTAR PDF ----
+  function exportPDF() {
+    if (!vendas || vendas.length === 0) {
+      alert("Sem vendas para exportar");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text("Relatório de Vendas", 14, 14);
+
+    const tableColumn = [
+      "ID",
+      "Cliente",
+      "Status",
+      "Valor (R$)",
+      "Data",
+      "Itens"
+    ];
+
+    const tableRows = [];
+
+    vendas.forEach(v => {
+      const itemsDesc = (v.items || [])
+        .map(it => `${it.nome} x${it.quantidade} (${Number(it.valor_unit).toFixed(2)})`)
+        .join(" ; ");
+
+      const row = [
+        v.id,
+        v.cliente || "",
+        v.status || "",
+        Number(v.valor_total).toFixed(2),
+        new Date(v.created_at).toLocaleString(),
+        itemsDesc
+      ];
+
+      tableRows.push(row);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 22,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [200, 150, 90] }
+    });
+
+
+    doc.save(`relatorio_vendas_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
+  // ---- IMPRESSÃO ----
   function printRelatorio() {
     if (!vendas || vendas.length === 0) {
       alert("Sem vendas para imprimir");
@@ -169,16 +214,16 @@ export default function Dashboard() {
 
     const win = window.open("", "_blank", "width=900,height=700");
     if (!win) {
-      alert("Não foi possível abrir a janela de impressão — permita popups.");
+      alert("Não foi possível abrir a janela de impressão");
       return;
     }
 
     const style = `
       <style>
-        body{font-family: Arial, Helvetica, sans-serif; padding:20px; color:#333}
-        h1{font-size:18px;margin-bottom:6px}
+        body{font-family: Arial; padding:20px}
+        h1{font-size:18px}
         table{width:100%;border-collapse:collapse;margin-top:12px}
-        th,td{border:1px solid #ddd;padding:6px;font-size:12px;text-align:left}
+        th,td{border:1px solid #ddd;padding:6px;font-size:12px}
         th{background:#f4f4f4}
         .right{text-align:right}
       </style>
@@ -188,6 +233,7 @@ export default function Dashboard() {
       const itemsDesc = (v.items || [])
         .map(it => `${it.nome} x${it.quantidade} R$${Number(it.valor_unit).toFixed(2)}`)
         .join("; ");
+
       return `<tr>
         <td>${v.id}</td>
         <td>${escapeHtml(v.cliente || "")}</td>
@@ -198,40 +244,30 @@ export default function Dashboard() {
       </tr>`;
     }).join("");
 
-    const html = `
+    win.document.open();
+    win.document.write(`
       <html>
         <head><title>Relatório de Vendas</title>${style}</head>
         <body>
           <h1>Relatório de Vendas — ${new Date().toLocaleDateString()}</h1>
-          <div>Total hoje: <strong>R$ ${vendasHojeTotal.toFixed(2)}</strong></div>
-          <div>Total últimos 7 dias: <strong>R$ ${vendasUltimos7diasTotal.toFixed(2)}</strong></div>
           <table>
             <thead>
               <tr>
                 <th>ID</th><th>Cliente</th><th>Status</th><th>Valor</th><th>Data</th><th>Itens</th>
               </tr>
             </thead>
-            <tbody>
-              ${rowsHtml}
-            </tbody>
+            <tbody>${rowsHtml}</tbody>
           </table>
         </body>
       </html>
-    `;
-
-    win.document.open();
-    win.document.write(html);
+    `);
     win.document.close();
 
-    // esperar pequeno delay para garantir carregamento antes de print
-    setTimeout(() => {
-      win.print();
-    }, 500);
+    setTimeout(() => win.print(), 500);
   }
 
   function escapeHtml(str) {
-    if (!str) return "";
-    return String(str)
+    return String(str || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -239,15 +275,10 @@ export default function Dashboard() {
       .replace(/'/g, "&#039;");
   }
 
-  // troca de telas
+  // trocar de tela
   const switchTo = (target) => {
     setScreen(target);
     window.scrollTo(0, 0);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
   };
 
   return (
@@ -299,8 +330,10 @@ export default function Dashboard() {
             </aside>
 
             {/* CONTEÚDO PRINCIPAL */}
-            <div className="card" style={{ padding: "18px" }}>
-              <h2>Visão Geral</h2>
+            <div className="card sidemenu" style={{ padding: "20px" }}>
+              <div style={{ fontWeight: 800, fontSize: "18px", color: "var(--brown)"}}>
+                Visão Geral
+              </div>
               <div className="subtitle">Resumo em tempo real</div>
 
               <div style={{ display: "flex", gap: "22px", marginTop: "22px", alignItems: "center" }}>
@@ -318,8 +351,11 @@ export default function Dashboard() {
                           Relatórios rápidos <br />
                           <small style={{ color: "rgba(0,0,0,0.6)" }}>Exportar / imprimir</small>
                         </div>
+
+                        {/* BOTÕES COM PDF INCLUÍDO */}
                         <div className="relatorios">
                           <button onClick={exportCSV} className="btn-small">Exportar CSV</button>
+                          <button onClick={exportPDF} className="btn-small">Exportar PDF</button>
                           <button onClick={printRelatorio} className="btn-small">Imprimir</button>
                         </div>
                       </div>
@@ -335,6 +371,7 @@ export default function Dashboard() {
                         Últimos 7 dias: R$ {vendasUltimos7diasTotal.toFixed(2)}
                       </div>
                     </div>
+
                   </div>
                 </div>
               </div>
@@ -343,10 +380,10 @@ export default function Dashboard() {
         </section>
       )}
 
-      {/* OUTRAS TELAS */}
       {screen === "orders" && <Orders screen={screen} switchTo={switchTo} />}
       {screen === "stocks" && <Stocks screen={screen} switchTo={switchTo} />}
       {screen === "produtos" && <Produtos screen={screen} switchTo={switchTo} />}
+      <Footer />
     </main>
   );
 }

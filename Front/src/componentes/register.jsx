@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../register.css";
 import Header from "./header";
+import Footer from "./footer";
+
+// Ícones
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -12,7 +17,12 @@ export default function Register() {
     cargo: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  function togglePassword() {
+    setShowPassword(!showPassword);
+  }
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,88 +57,102 @@ export default function Register() {
 
   return (
     <>
-    <Header/>
-    <section id="register" className="screen show">
-      <div className="layout" style={{ height: "90%" }}>
-        <div
-          className="right card"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+      <Header />
+      <section id="register" className="screen show">
+        <div className="layout" style={{ height: "90%" }}>
           <div
+            className="right card"
             style={{
-              width: "100%",
-              maxWidth: "380px",
               display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <h2 style={{alignSelf:"center", marginBottom:"5%"}}>Criar Conta</h2>
-
-            <form action="#" >
-              <label>Nome completo</label>
-            <input
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-              required
-            />
-
-            <label>E-mail</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-
-            <label>Senha</label>
-            <input
-              name="senha"
-              type="password"
-              value={form.senha}
-              onChange={handleChange}
-              required
-            />
-
-            <label>Cargo</label>
-            <input
-              name="cargo"
-              value={form.cargo}
-              onChange={handleChange}
-              required
-            />
-
-            <button
-              className="btn"
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ marginTop: "10px" }}
-            >
-              {loading ? "Registrando..." : "Registrar"}
-            </button>
-            </form>
-
-            {/* Já tem conta */}
-            <p
+            <div
               style={{
-                marginTop: "15px",
-                fontSize: "14px",
                 width: "100%",
-                textAlign: "center",
+                maxWidth: "380px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
               }}
             >
-              Já tem conta? <Link to="/login">Entrar</Link>
-            </p>
+              <h2 style={{ alignSelf: "center", marginBottom: "5%" }}>
+                Criar Conta
+              </h2>
+
+              <form>
+                <label>Nome completo</label>
+                <input
+                  name="nome"
+                  value={form.nome}
+                  onChange={handleChange}
+                  required
+                />
+
+                <label>E-mail</label>
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+
+                <label>Senha</label>
+
+                {/* Campo com ícone */}
+                <div className="password-wrapper">
+                  <input
+                    name="senha"
+                    type={showPassword ? "text" : "password"}
+                    value={form.senha}
+                    onChange={handleChange}
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    onClick={togglePassword}
+                    className="eye-btn"
+                  >
+                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                  </button>
+                </div>
+
+                <label>Cargo</label>
+                <input
+                  name="cargo"
+                  value={form.cargo}
+                  onChange={handleChange}
+                  required
+                />
+
+                <button
+                  className="btn"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  style={{ marginTop: "10px" }}
+                >
+                  {loading ? "Registrando..." : "Registrar"}
+                </button>
+              </form>
+
+              <p
+                style={{
+                  marginTop: "15px",
+                  fontSize: "14px",
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Já tem conta? <Link to="/login">Entrar</Link>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <Footer />
     </>
   );
 }

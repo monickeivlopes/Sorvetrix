@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "./header";
 import "../pedidos.css";
+import Footer from "./footer";
 
 export default function Pedidos({ screen }) {
   const API_BASE = "http://localhost:8000";
@@ -293,6 +294,7 @@ export default function Pedidos({ screen }) {
           </div>
         </div>
       </section>
+      <Footer/>
     </>
   );
 }

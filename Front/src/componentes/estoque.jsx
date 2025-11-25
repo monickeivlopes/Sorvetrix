@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "./header";
 import "../estoque.css";
 import { NavLink } from "react-router-dom";
+import Footer from "./footer";
 
 export default function Stocks({ screen }) {
   const [produtos, setProdutos] = useState([]);
@@ -223,6 +224,7 @@ export default function Stocks({ screen }) {
           </div>
         </div>
       </section>
+      <Footer/>
     </>
   );
 }

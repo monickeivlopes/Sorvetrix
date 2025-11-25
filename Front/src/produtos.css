@@ -7,7 +7,7 @@
   --blue: #8edbe6;
   --pink: #f38fc5;
   --cream: #fdefdb;
-  --pink-light: ##D2B48C;
+  --pink-light: #D2B48C;
   --brown: #7b4b36;
   --card: #FFDDA9;
   --accent: #ffe6e9;
@@ -22,138 +22,93 @@
   box-sizing: border-box;
 }
 
-
-
 #root {
   width: 100%;
 }
 
 /* =========================================================
-   APP STRUCTURE
-========================================================= */
-.app {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-header {
-  width: 100%;
-  height: 10%;
-  padding: 16px 28px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-/* Logo */
-.logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 12px;
-  display: flex;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-}
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-nav {
-  display: flex;
-  gap: 12px;
-}
-
-nav button {
-  padding: 8px 12px;
-  background: transparent;
-  border: 2px solid rgba(123,75,54,0.06);
-  border-radius: 12px;
-  color: var(--brown);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-nav a {
-  text-decoration: none;
-  font-weight: bold;
-  color: var(--pink-test);
-}
-
-nav a:hover {
-  color: var(--pink-light);
-}
-
-/* =========================================================
-   MAIN & GENERAL LAYOUTS
-========================================================= */
-main {
-  flex: 1;
-  padding: 24px;
-  gap: 22px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-}
-
-
-
-/* =========================================================
-   PRODUTOS PAGE
+   LAYOUT PRINCIPAL
 ========================================================= */
 
 #products.screen {
+  margin-left: 10%;
   display: flex;
   flex-direction: column;
-}
-
-/* Drip (caso use o efeito como no dashboard, mas rosa) */
-#products .drip {
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffd9ec, #ffecf6);
-  z-index: 0;
-  opacity: 0.4;
-}
-
-/* Card principal */
-#products .card {
   position: relative;
-  z-index: 2;
- 
+  padding: 24px;
+  background: linear-gradient(180deg, #ffd9ec, #ffecf6);
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.07);
 }
 
-/* ===============================
+/* Efeito drip */
+#products .drip {
+  display: none;
+}
+
+/* =========================================================
+   CARD PRINCIPAL
+========================================================= */
+
+#products .card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+}
+
+/* Cabeçalho do card */
+#products .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Botão Novo Produto */
+#products .btn {
+  padding: 12px 18px;
+  font-weight: 700;
+  background-color: var(--card);
+  border: none;
+  border-radius: 12px;
+  color: #7b4b36;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(243,143,197,0.2);
+  transition: 0.2s ease;
+}
+
+#products .btn:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================================================
    FORMULÁRIO
-================================= */
+========================================================= */
 
 #products form.card {
+  margin-top: 18px;
   background: var(--cream);
+  padding: 18px;
   border-radius: 16px;
   box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-/* inputs */
+#products label {
+  font-size: 14px;
+  color: var(--brown);
+  font-weight: 600;
+}
+
 #products input {
   background: #fff;
-  border: 1px solid rgba(123,75,54,0.1);
-  border-radius: 12px;
+  border: 1px solid rgba(123,75,54,0.12);
   padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
   transition: 0.2s;
 }
 
@@ -162,97 +117,153 @@ main {
   box-shadow: 0 0 6px rgba(243,143,197,0.3);
 }
 
-/* botão dentro do form */
+/* Botão salvar */
 #products form button.btn {
   width: 100%;
-  margin-top: 8px;
-  
+  margin-top: 6px;
 }
 
-/* ===============================
-   LISTA / “TABELA”
-================================= */
+/* =========================================================
+   LISTA DE PRODUTOS
+========================================================= */
 
 #products .table {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  margin-top: 18px;
 }
 
-/* cada item da lista */
 #products .item {
   background: white;
-  padding: 16px 18px;
+  padding: 18px;
   border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: 0.2s;
+  gap: 20px;
+  transition: 0.2s ease;
 }
 
 #products .item:hover {
   transform: scale(1.01);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-/* textos */
+#products .item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 #products .item strong {
+  font-size: 17px;
   color: var(--brown);
-  font-size: 16px;
 }
 
-#products .item div {
-  line-height: 1.4;
-}
-
-/* ===============================
-   BOTÕES (Editar / Excluir)
-================================= */
-
-/* botões pequenos */
-#products .card .btn.small {
-  padding: 8px 14px;
+#products .item small {
+  color: rgba(107,63,63,0.65);
   font-size: 13px;
-  border-radius: 10px;
-  background-color: var(--card);
+}
+
+#products .item-details {
+  font-size: 13px;
+  color: rgba(107,63,63,0.7);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   BOTÕES (Editar / Excluir)
+========================================================= */
+
+#products .btn.small {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #7b4b36;
+  border: none;
+  transition: 0.2s ease;
+}
+
+#products .btn.small:hover {
+  transform: scale(1.05);
 }
 
 /* editar */
-#products .btn.small {
+#products .btn.small.edit {
   background: linear-gradient(180deg, var(--pink), var(--pink-light));
-  color: white;
 }
 
 /* excluir */
 #products .btn.small.danger {
   background: #ff6b6b;
-  box-shadow: 0 6px 16px rgba(255,107,107,0.2);
+  color: white;
 }
 
-#products .btn.small.danger:hover {
-  background: #ff5252;
-  transform: scale(1.05);
+/* =========================================================
+   RESPONSIVIDADE GERAL
+========================================================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  #products.screen {
+    margin-left: 0;
+    padding: 18px;
+  }
 }
 
-/* hover padrão */
-#products .btn.small:hover {
-  transform: scale(1.05);
-}
-
-/* ===============================
-   RESPONSIVE
-================================= */
-
+/* MOBILE */
 @media (max-width: 720px) {
+
+  #products.screen {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  #products .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 
   #products .item {
     flex-direction: column;
     text-align: center;
-    gap: 10px;
+    align-items: center;
+    gap: 14px;
   }
 
   #products .btn.small {
     width: 100%;
+  }
+
+  #products form.card {
+    padding: 16px;
+  }
+
+  #products input {
+    font-size: 14px;
+  }
+
+  #products .item strong {
+    font-size: 15px;
+  }
+}
+
+/* MOBILE PEQUENO */
+@media (max-width: 480px) {
+
+  #products.screen {
+    padding: 12px;
+  }
+
+  #products .item {
+    padding: 14px;
+  }
+
+  #products .btn {
+    width: 100%;
+    text-align: center;
   }
 }

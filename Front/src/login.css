@@ -118,7 +118,7 @@ main {
 #login.screen {
   width: 70%;
   margin-left: 15%;
-  margin-top: 10%;
+ 
  
   display: flex;
   justify-content: center;
@@ -225,6 +225,30 @@ main {
   max-width: 220px;
   height: 42px;
 }
+.password-wrapper {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* espaço para o ícone */
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+}
+
+.password-icon:hover {
+  color: #222;
+}
+
 
 /* =========================================================
    RESPONSIVE LOGIN

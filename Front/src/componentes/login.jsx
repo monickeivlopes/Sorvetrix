@@ -2,12 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../login.css";
 import Header from "./header";
+import Footer from "./footer";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin() {
     setLoading(true);
@@ -37,7 +42,7 @@ export default function Login() {
 
   return (
     <>
-     <Header />
+      <Header />
       <section id="login" className="screen show">
         <div className="layout" style={{ height: "100%" }}>
           <div
@@ -66,17 +71,26 @@ export default function Login() {
               />
 
               <label>Senha</label>
-              <input
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-              />
+
+              {/* Campo de senha com ícone */}
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  className="password-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              </div>
 
               <button className="btn" onClick={handleLogin} disabled={loading}>
                 {loading ? "Entrando..." : "Entrar"}
               </button>
 
-              {/* Esqueceu a senha */}
               <p
                 style={{
                   marginTop: "10px",
@@ -88,7 +102,6 @@ export default function Login() {
                 Esqueceu a senha?
               </p>
 
-              {/* Botão Criar uma conta */}
               <div
                 style={{
                   width: "100%",
@@ -97,19 +110,13 @@ export default function Login() {
                   marginTop: "15px",
                 }}
               >
-                <a
-                  
-                  
-                  onClick={() => navigate("/register")}
-                >
-                  Criar uma conta
-                </a>
+                <a onClick={() => navigate("/register")}>Criar uma conta</a>
               </div>
-
             </div>
           </div>
         </div>
       </section>
+      <Footer />
     </>
   );
 }
