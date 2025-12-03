@@ -12,7 +12,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Verifica token ao iniciar o app
+   
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
@@ -21,7 +21,7 @@ export default function App() {
     <Router>
       <Routes>
 
-        {/* Login deve redirecionar se já estiver logado */}
+       
         <Route
           path="/login"
           element={<Login setIsLoggedIn={setIsLoggedIn} />}
@@ -32,7 +32,7 @@ export default function App() {
           element={<Register />}
         />
 
-        {/* Rotas privadas */}
+        
         <Route
           path="/dashboard"
           element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
@@ -53,7 +53,7 @@ export default function App() {
           element={isLoggedIn ? <Orders /> : <Navigate to="/login" />}
         />
 
-        {/* Rota padrão */}
+       
         <Route
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}

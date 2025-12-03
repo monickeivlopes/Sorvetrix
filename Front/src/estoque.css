@@ -1,6 +1,4 @@
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+
 :root {
   --mint: #c2ffd9;
   --yellow: #ffcd5c;
@@ -15,9 +13,7 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -26,13 +22,10 @@
   width: 100%;
 }
 
-/* =========================================================
-   STOCK PAGE (Gerenciamento de Estoque)
-========================================================= */
 
 #stock.screen {
   width: 100%;
-  margin-left: 10%;
+  margin-left: 15%;
   position: relative;
   padding: 28px;
   background: linear-gradient(180deg, #fdefdb, #ffe6e9);
@@ -42,14 +35,12 @@
   flex-direction: column;
 }
 
-/* Remover drip */
+
 #stock .drip {
   display: none !important;
 }
 
-/* ============================
-   CARD PRINCIPAL
-============================= */
+
 #stock .card {
   background-color: white;
   color: var(--brown);
@@ -61,9 +52,7 @@
   gap: 16px;
 }
 
-/* ============================
-   Títulos
-============================= */
+
 #stock h2 {
   margin: 0 0 4px 0;
   color: var(--brown);
@@ -74,9 +63,7 @@
   font-size: 14px;
 }
 
-/* ============================
-   Botões do topo
-============================= */
+
 #stock .btn {
   padding: 12px 16px;
   background-color: var(--card);
@@ -109,9 +96,7 @@
   background: rgba(123,75,54,0.06);
 }
 
-/* ============================
-   Cards de Lote
-============================= */
+
 #stock .lote-card {
   background: var(--card);
   border-radius: 14px;
@@ -129,7 +114,7 @@
   align-items: center;
 }
 
-/* Quantidade */
+
 #stock .qty {
   padding: 8px 16px;
   border-radius: 8px;
@@ -147,9 +132,7 @@
   color: green;
 }
 
-/* ============================
-   Itens
-============================= */
+
 #stock .item {
   padding: 6px 0;
   font-size: 15px;
@@ -164,7 +147,7 @@
   border-bottom: none;
 }
 
-/* Inputs de edição */
+
 #stock .item .input {
   width: 140px;
   padding: 8px;
@@ -172,9 +155,7 @@
   border: 1px solid rgba(0,0,0,0.12);
 }
 
-/* ============================
-   Scroll interno da lista
-============================= */
+
 #stock .stock-list {
   margin-top: 18px;
   overflow-y: auto;
@@ -191,9 +172,6 @@
   border-radius: 4px;
 }
 
-/* =========================================================
-   RESPONSIVIDADE
-========================================================= */
 
 /* TABLET (<= 992px) */
 @media (max-width: 992px) {

@@ -6,16 +6,16 @@ import Stocks from "./estoque";
 import Produtos from "./produtos";
 import Footer from "./footer";
 
-// ---- IMPORTAÇÃO PARA PDF ----
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function Dashboard() {
-  const API_BASE = "http://localhost:8000";
+  const API_BASE = "http://localhost:8080";
 
   const [screen, setScreen] = useState("dashboard");
 
-  // --- ESTADOS COM OS DADOS REAIS ---
+
   const [vendasHojeCount, setVendasHojeCount] = useState(0);
   const [vendasHojeTotal, setVendasHojeTotal] = useState(0.0);
   const [vendasUltimos7diasTotal, setVendasUltimos7diasTotal] = useState(0.0);
@@ -28,7 +28,6 @@ export default function Dashboard() {
     fetchProdutos();
   }, []);
 
-  // ---- BUSCAR VENDAS ----
   async function fetchVendas() {
     try {
       const res = await fetch(`${API_BASE}/vendas`);
@@ -72,7 +71,7 @@ export default function Dashboard() {
     }
   }
 
-  // ---- BUSCAR PRODUTOS ----
+
   async function fetchProdutos() {
     try {
       const res = await fetch(`${API_BASE}/produtos`);
@@ -96,7 +95,7 @@ export default function Dashboard() {
     }
   }
 
-  // ---- EXPORTAR CSV ----
+  
   function exportCSV() {
     if (!vendas || vendas.length === 0) {
       alert("Sem vendas para exportar");
@@ -153,7 +152,7 @@ export default function Dashboard() {
     return value;
   }
 
-  // ---- EXPORTAR PDF ----
+  
   function exportPDF() {
     if (!vendas || vendas.length === 0) {
       alert("Sem vendas para exportar");
@@ -205,7 +204,7 @@ export default function Dashboard() {
     doc.save(`relatorio_vendas_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
-  // ---- IMPRESSÃO ----
+  
   function printRelatorio() {
     if (!vendas || vendas.length === 0) {
       alert("Sem vendas para imprimir");
@@ -275,7 +274,7 @@ export default function Dashboard() {
       .replace(/'/g, "&#039;");
   }
 
-  // trocar de tela
+  
   const switchTo = (target) => {
     setScreen(target);
     window.scrollTo(0, 0);
@@ -329,7 +328,7 @@ export default function Dashboard() {
               </div>
             </aside>
 
-            {/* CONTEÚDO PRINCIPAL */}
+            
             <div className="card sidemenu" style={{ padding: "20px" }}>
               <div style={{ fontWeight: 800, fontSize: "18px", color: "var(--brown)"}}>
                 Visão Geral
@@ -352,7 +351,7 @@ export default function Dashboard() {
                           <small style={{ color: "rgba(0,0,0,0.6)" }}>Exportar / imprimir</small>
                         </div>
 
-                        {/* BOTÕES COM PDF INCLUÍDO */}
+                        
                         <div className="relatorios">
                           <button onClick={exportCSV} className="btn-small">Exportar CSV</button>
                           <button onClick={exportPDF} className="btn-small">Exportar PDF</button>

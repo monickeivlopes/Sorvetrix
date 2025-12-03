@@ -15,9 +15,7 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -26,29 +24,25 @@
   width: 100%;
 }
 
-/* =========================================================
-   LAYOUT PRINCIPAL
-========================================================= */
+
 
 #products.screen {
-  margin-left: 10%;
+  margin-left: 15%;
   display: flex;
   flex-direction: column;
   position: relative;
   padding: 24px;
-  background: linear-gradient(180deg, #ffd9ec, #ffecf6);
+  background: linear-gradient(180deg, #fdefdb, #ffe6e9);
   border-radius: 18px;
   box-shadow: 0 14px 40px rgba(0,0,0,0.07);
 }
 
-/* Efeito drip */
+
 #products .drip {
   display: none;
 }
 
-/* =========================================================
-   CARD PRINCIPAL
-========================================================= */
+
 
 #products .card {
   background: white;
@@ -57,7 +51,7 @@
   box-shadow: 0 10px 28px rgba(0,0,0,0.06);
 }
 
-/* Cabeçalho do card */
+
 #products .card-header {
   display: flex;
   justify-content: space-between;
@@ -65,7 +59,6 @@
   gap: 14px;
 }
 
-/* Botão Novo Produto */
 #products .btn {
   padding: 12px 18px;
   font-weight: 700;
@@ -82,9 +75,7 @@
   transform: translateY(-2px);
 }
 
-/* =========================================================
-   FORMULÁRIO
-========================================================= */
+
 
 #products form.card {
   margin-top: 18px;
@@ -117,15 +108,13 @@
   box-shadow: 0 0 6px rgba(243,143,197,0.3);
 }
 
-/* Botão salvar */
+
 #products form button.btn {
   width: 100%;
   margin-top: 6px;
 }
 
-/* =========================================================
-   LISTA DE PRODUTOS
-========================================================= */
+
 
 #products .table {
   display: flex;
@@ -172,9 +161,7 @@
   line-height: 1.5;
 }
 
-/* =========================================================
-   BOTÕES (Editar / Excluir)
-========================================================= */
+
 
 #products .btn.small {
   padding: 8px 12px;
@@ -190,20 +177,18 @@
   transform: scale(1.05);
 }
 
-/* editar */
+
 #products .btn.small.edit {
   background: linear-gradient(180deg, var(--pink), var(--pink-light));
 }
 
-/* excluir */
+
 #products .btn.small.danger {
   background: #ff6b6b;
   color: white;
 }
 
-/* =========================================================
-   RESPONSIVIDADE GERAL
-========================================================= */
+
 
 /* Tablets */
 @media (max-width: 1024px) {
