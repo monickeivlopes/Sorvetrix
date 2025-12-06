@@ -57,6 +57,10 @@ pip install fastapi uvicorn
 ### ▶️ Rodar o servidor da API
 
 ```bash
+cd API
+```
+
+```bash
 python -m uvicorn main:app --reload
 ```
 
