@@ -229,7 +229,7 @@ def listar_produtos(db: Session = Depends(get_db)):
             "lote": p.lote,
             "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
             "valor": p.valor,
-            "quantidade": p.quantidade   # 🔥🔥🔥 AQUI FALTAVA!!
+            "quantidade": p.quantidade   
         }
         for p in produtos
     ]

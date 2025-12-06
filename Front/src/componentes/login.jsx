@@ -7,12 +7,38 @@ import Footer from "./footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
+function Modal({ message, type, onClose }) {
+  if (!message) return null;
+
+  return (
+    <div style={styles.overlay}>
+      <div style={{ 
+        ...styles.modal, 
+        borderLeft: type === "success" ? "6px solid green" : "6px solid red" 
+      }}>
+        <p>{message}</p>
+        <button style={styles.button} onClick={onClose}>OK</button>
+      </div>
+    </div>
+  );
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // 🔹 controle do modal
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState("success");
+
+  function showModal(msg, t = "success") {
+    setModalMessage(msg);
+    setModalType(t);
+    setTimeout(() => setModalMessage(""), 2500);
+  }
 
   async function handleLogin() {
     setLoading(true);
@@ -27,13 +53,15 @@ export default function Login() {
 
       if (response.ok) {
         localStorage.setItem("token", data.access_token);
-        alert(`Bem-vindo(a), ${data.user}!`);
-        navigate("/dashboard");
+
+        showModal(`Bem-vindo(a), ${data.user}!`, "success");
+
+        setTimeout(() => navigate("/dashboard"), 1200);
       } else {
-        alert(data.detail || "Erro ao fazer login");
+        showModal(data.detail || "Erro ao fazer login", "error");
       }
     } catch (err) {
-      alert("Erro de conexão com o servidor.");
+      showModal("Erro de conexão com o servidor.", "error");
       console.error(err);
     } finally {
       setLoading(false);
@@ -43,36 +71,22 @@ export default function Login() {
   return (
     <>
       <Header />
+      <Modal 
+        message={modalMessage} 
+        type={modalType} 
+        onClose={() => setModalMessage("")} 
+      />
+
       <section id="login" className="screen show">
         <div className="layout" style={{ height: "100%" }}>
-          <div
-            className="right card"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: "380px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
+          <div className="right card" style={styles.centerCard}>
+            <div style={styles.formBox}>
               <h2>Entrar</h2>
 
               <label>E-mail</label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <input value={email} onChange={(e) => setEmail(e.target.value)} />
 
               <label>Senha</label>
-
-              {/* Campo de senha com ícone */}
               <div className="password-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -91,25 +105,11 @@ export default function Login() {
                 {loading ? "Entrando..." : "Entrar"}
               </button>
 
-              <p
-                style={{
-                  marginTop: "10px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                }}
-                onClick={() => navigate("/forgot")}
-              >
+              <p style={styles.link} onClick={() => navigate("/forgot")}>
                 Esqueceu a senha?
               </p>
 
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "15px",
-                }}
-              >
+              <div style={styles.center}>
                 <a onClick={() => navigate("/register")}>Criar uma conta</a>
               </div>
             </div>
@@ -120,3 +120,63 @@ export default function Login() {
     </>
   );
 }
+
+
+const styles = {
+  overlay: {
+    position: "fixed",
+    top: 0, left: 0,
+    width: "100vw", height: "100vh",
+    background: "rgba(0,0,0,0.45)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
+
+  modal: {
+    background: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "280px",
+    textAlign: "center",
+    fontSize: "16px",
+    animation: "fadeIn .3s",
+  },
+
+  button: {
+    marginTop: "12px",
+    padding: "6px 15px",
+    cursor: "pointer",
+    background: "#1f75fe",
+    border: "none",
+    color: "#fff",
+    borderRadius: "5px"
+  },
+
+  centerCard: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  formBox: {
+    width: "100%",
+    maxWidth: "380px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start"
+  },
+
+  link: {
+    marginTop: "10px",
+    fontSize: "14px",
+    cursor: "pointer"
+  },
+
+  center: {
+    width: "100%",
+    textAlign: "center",
+    marginTop: "15px"
+  }
+};
