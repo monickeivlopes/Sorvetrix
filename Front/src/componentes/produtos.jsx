@@ -17,7 +17,7 @@ export default function Produtos({ screen }) {
     lote: "",
     validade: "",
     valor: "",
-    quantidade: "",      // 🔥 ADICIONADO
+    quantidade: "",      
   });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Produtos({ screen }) {
       lote: Number(formData.lote),
       validade: formData.validade,
       valor: Number(formData.valor),
-      quantidade: Number(formData.quantidade), // 🔥 ENVIANDO
+      quantidade: Number(formData.quantidade),  
     };
 
     if (isEditing) {
@@ -72,7 +72,7 @@ export default function Produtos({ screen }) {
       return;
     }
 
-    // Criar
+ 
     try {
       const response = await fetch(`${API_BASE}/produtos`, {
         method: "POST",
@@ -95,7 +95,7 @@ export default function Produtos({ screen }) {
       lote: produto.lote,
       validade: produto.validade,
       valor: produto.valor,
-      quantidade: produto.quantidade,     // 🔥 EDITAR QUANTIDADE
+      quantidade: produto.quantidade,     
     });
 
     setIsEditing(true);
@@ -151,7 +151,7 @@ export default function Produtos({ screen }) {
                   lote: "",
                   validade: "",
                   valor: "",
-                  quantidade: "",   // 🔥 RESET
+                  quantidade: "",   
                 });
               }}
             >
@@ -186,7 +186,7 @@ export default function Produtos({ screen }) {
               <label>Valor (R$)</label>
               <input name="valor" type="number" step="0.01" onChange={handleChange} value={formData.valor} required />
 
-              {/* 🔥 NOVO CAMPO DE QUANTIDADE */}
+              
               <label>Quantidade</label>
               <input
                 name="quantidade"
@@ -229,7 +229,7 @@ export default function Produtos({ screen }) {
                         <br />
                         <strong>Valor: R$ {p.valor.toFixed(2)}</strong>
                         <br />
-                        Quantidade: {p.quantidade} {/* 🔥 MOSTRA A QUANTIDADE */}
+                        Quantidade: {p.quantidade} 
                       </div>
                     </div>
 

@@ -16,16 +16,16 @@ export default function Stocks({ screen }) {
       const data = await response.json();
       setProdutos(data);
 
-      // Prepara estado de edição
+      
       const map = {};
       data.forEach((p) => {
         map[p.id] = {
           marca: p.marca,
           sabor: p.sabor,
           lote: p.lote,
-          validade: p.validade,
+          validade: p.validade ? p.validade.split("T")[0] : "",
           valor: p.valor,
-          quantidade: p.quantidade ?? 1, // 🟢 agora quantidade editável
+          quantidade: p.quantidade ?? 1, 
         };
       });
       setEditData(map);
@@ -70,7 +70,7 @@ export default function Stocks({ screen }) {
     }
   };
 
-  // Agrupamento por lote/marca/sabor
+   
   const produtosPorLote = produtos.reduce((grp, p) => {
     const key = `${p.lote}::${p.marca}::${p.sabor}`;
     if (!grp[key])
@@ -93,7 +93,7 @@ export default function Stocks({ screen }) {
 
         <div className="card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
 
-          {/* Topo */}
+          
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <h2 style={{ margin: 0, color: "var(--brown)" }}>Gerenciamento de Estoque</h2>
@@ -117,7 +117,7 @@ export default function Stocks({ screen }) {
             </div>
           </div>
 
-          {/* CONTEÚDO */}
+          
           <div style={{ marginTop: "18px", flex: 1, overflow: "auto" }}>
             {loading && (
               <div style={{ padding: "20px", color: "gray" }}>Carregando produtos...</div>
@@ -128,7 +128,7 @@ export default function Stocks({ screen }) {
                 const grp = produtosPorLote[key];
                 const itens = grp.items;
 
-                // 🟢 soma real das quantidades
+                 
                 const quantidade = itens.reduce(
                   (sum, i) => sum + (i.quantidade ?? 1),
                   0
@@ -140,7 +140,7 @@ export default function Stocks({ screen }) {
                 return (
                   <div key={key} className="card" style={{ marginBottom: "14px", padding: "18px" }}>
 
-                    {/* Cabeçalho */}
+                    
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>
                         <h3 style={{ margin: 0 }}>Lote {grp.lote}</h3>
@@ -163,7 +163,7 @@ export default function Stocks({ screen }) {
                       </div>
                     </div>
 
-                    {/* Lista dos itens */}
+                    
                     <div style={{ marginTop: "12px" }}>
                       {itens.map((p) => (
                         <div key={p.id} className="item" style={{ marginBottom: "14px" }}>
@@ -197,7 +197,7 @@ export default function Stocks({ screen }) {
                                 onChange={(e) => handleEditChange(p.id, "valor", e.target.value)}
                               />
 
-                              {/* 🟢 quantidade */}
+                              
                               <input
                                 className="input"
                                 type="number"

@@ -1,9 +1,4 @@
-/* =========================================================
-   LOGIN PAGE
-========================================================= */
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+
 :root {
   --mint: #c2ffd9;
   --yellow: #ffcd5c;
@@ -18,9 +13,7 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -31,9 +24,6 @@
   width: 100%;
 }
 
-/* =========================================================
-   APP STRUCTURE
-========================================================= */
 .app {
   width: 100%;
   height: 100vh;
@@ -54,10 +44,10 @@ header {
 .brand {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 80%;
 }
 
-/* Logo */
+
 .logo {
   width: 72px;
   height: 72px;
@@ -100,9 +90,7 @@ nav a:hover {
   color: var(--pink-light);
 }
 
-/* =========================================================
-   MAIN & GENERAL LAYOUTS
-========================================================= */
+
 main {
   flex: 1;
   padding: 10px;
@@ -115,8 +103,8 @@ main {
 
 
 #register.screen {
-  width: 70%;
-  margin-left: 15%;
+  width: 50%;
+  margin-left: 25%;
  
  
   display: flex;
@@ -124,15 +112,15 @@ main {
   align-items: center;
 }
 
-/* Container com o card */
+
 #register .layout {
-  width: 100%;
+  width: 70%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Card à direita (onde ficam os inputs) */
+
 #register .right.card {
   width: 100%;
   max-width: 480px;
@@ -142,22 +130,22 @@ main {
   box-shadow: 0 10px 28px rgba(0,0,0,0.06);
 }
 
-/* Área interna do formulário */
+
 #register .right.card > div {
   width: 100%;
 }
-#register .right.card > div input{
+#register .right.card > div input,select{
   width: 100%;
 }
 
-/* Título */
+
 #register h2 {
   color: var(--brown);
   margin-bottom: 16px;
 }
 
-/* Inputs */
-#register input {
+
+#register input, #register select {
   margin-top: 6px;
   margin-bottom: 14px;
   padding: 12px 14px;
@@ -175,7 +163,7 @@ main {
   outline: none;
 }
 
-/* Botão “Entrar” */
+
 #register .btn {
   width: 100%;
   padding: 12px 18px;
@@ -199,7 +187,7 @@ main {
   cursor: not-allowed;
 }
 
-/* Link "Esqueceu a senha?" */
+
 #register p {
   color: var(--pink-test);
   font-weight: 600;
@@ -211,7 +199,7 @@ main {
   transform: translateX(3px);
 }
 
-/* Botão Criar uma conta */
+
 #register .signup-container {
   width: 100%;
   display: flex;
@@ -246,9 +234,6 @@ main {
   color: #6b3f3f;
 }
 
-/* =========================================================
-   RESPONSIVE LOGIN
-========================================================= */
 
 @media (max-width: 600px) {
   #register .right.card {

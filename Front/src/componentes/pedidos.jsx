@@ -27,7 +27,7 @@ export default function Pedidos({ screen }) {
       const resProdutos = await fetch(`${API_BASE}/produtos`);
       const produtosData = await resProdutos.json();
 
-      // 🔥 REMOVE PRODUTOS SEM ESTOQUE DO SELECT
+      
       const filtrados = produtosData.filter((p) => p.quantidade > 0);
 
       setProdutos(filtrados);
@@ -46,14 +46,14 @@ export default function Pedidos({ screen }) {
     carregarDados();
   }, []);
 
-  // Adicionar item
+ 
   function adicionarItem() {
     if (!currentItem.produto_id) return;
 
     const produto = produtos.find((p) => p.id == currentItem.produto_id);
     const quantidade = Number(currentItem.quantidade);
 
-    // 🚨 ALERTA SE TENTAR PEGAR ALGO SEM ESTOQUE
+     
     if (!produto || produto.quantidade <= 0) {
       alert("Este produto está sem estoque no momento.");
       return;
@@ -83,7 +83,7 @@ export default function Pedidos({ screen }) {
     setCurrentItem({ produto_id: "", quantidade: 1 });
   }
 
-  // Enviar pedido
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -142,7 +142,7 @@ export default function Pedidos({ screen }) {
         <div className="drip"></div>
 
         <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          {/* Header */}
+          
           <div className="card" style={{ display: "flex", justifyContent: "space-between" }}>
             <div>
               <h2 style={{ margin: 0, color: "var(--brown)" }}>Pedidos & Delivery</h2>
@@ -159,7 +159,7 @@ export default function Pedidos({ screen }) {
             </div>
           </div>
 
-          {/* Form */}
+          
           <div className="card" style={{ marginTop: "14px", padding: "14px" }}>
             <h3 style={{ margin: 0, color: "var(--brown)" }}>Adicionar Pedido</h3>
 
@@ -171,7 +171,7 @@ export default function Pedidos({ screen }) {
               >
                 <option value="">Selecione um produto...</option>
 
-                {/* 🔥 SELECT COM SOMENTE PRODUTOS QUE POSSUEM ESTOQUE */}
+                
                 {produtos.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.marca} — {p.sabor} (R$ {p.valor.toFixed(2)})
@@ -228,7 +228,7 @@ export default function Pedidos({ screen }) {
             </div>
           </div>
 
-          {/* Lista */}
+          
           <div style={{ marginTop: "14px", flex: 1, overflow: "auto" }}>
             <div className="orders-list">
               {pedidos.map((order) => (

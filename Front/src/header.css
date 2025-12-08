@@ -1,26 +1,38 @@
-/* =========================================================
-   HEADER STYLE (isolado)
-========================================================= */
+
+:root {
+  --mint: #c2ffd9;
+  --yellow: #ffcd5c;
+  --blue: #8edbe6;
+  --pink: #f38fc5;
+  --cream: #fdefdb;
+  --pink-light: ##D2B48C;
+  --brown: #7b4b36;
+  --card: #FFDDA9;
+  --accent: #ffe6e9;
+  --pink-strong: #f90989;
+  --pink-test: #f0208f;
+}
 
 .header {
-  width: 100%;
+  width: 80%;
   height: 10%;
   padding: 16px 28px;
   margin-bottom: 20px;
-  margin-left: 10%;
+   margin-left: 10%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Brand (logo + título) */
 .brand {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
+ 
 }
 
-/* Logo */
+
 .logo {
   width: 72px;
   height: 72px;
@@ -38,7 +50,7 @@
   object-fit: cover;
 }
 
-/* Títulos */
+
 .title-box {
   display: flex;
   flex-direction: column;
@@ -55,7 +67,7 @@
   color: rgba(107, 63, 63, 0.7);
 }
 
-/* Nav */
+
 .nav {
     width: 100%;
   display: flex;
@@ -63,24 +75,24 @@
   gap: 12px;
 }
 
-/* Links */
+
 .nav .link {
   text-decoration: none;
   font-weight: bold;
-  color: var(--pink-test);
+  color: var(--brown);
   transition: 0.2s ease;
 }
 
 .nav .link:hover {
-  color: var(--pink-light);
+  color: #f38fc5;
  
 }
 
 .nav .link.active {
-  text-decoration: underline;
+  color: #f38fc5;
 }
 
-/* Botão de sair */
+
 .logout-btn {
   margin-left: 14px;
   padding: 6px 14px;
@@ -98,7 +110,7 @@
   transform: scale(1.05);
 }
 
-/* Responsivo */
+
 @media (max-width: 900px) {
   .header {
     padding: 12px;

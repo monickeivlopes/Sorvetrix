@@ -101,7 +101,7 @@ export default function Register() {
 
                 <label>Senha</label>
 
-                {/* Campo com ícone */}
+               
                 <div className="password-wrapper">
                   <input
                     name="senha"
@@ -121,12 +121,17 @@ export default function Register() {
                 </div>
 
                 <label>Cargo</label>
-                <input
-                  name="cargo"
-                  value={form.cargo}
-                  onChange={handleChange}
-                  required
-                />
+                <select name="cargo" id="cargo" value={form.cargo} onChange={handleChange} required>
+                  <option value="Atendente">Atendente</option>
+                  <option value="Caixa">Caixa</option>
+                  <option value="Preparador">Preparador</option>
+                  <option value="Confeiteiro">Confeiteiro</option>
+                  <option value="Estoquista">Estoquista</option>
+                  <option value="Entregador">Entregador</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Gerente">Gerente</option>
+                </select>
+                
 
                 <button
                   className="btn"

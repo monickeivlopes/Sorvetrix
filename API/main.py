@@ -1,16 +1,18 @@
-
-# main.py
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from sqlalchemy import (
-    create_engine, Column, Integer, String, DateTime, Float, ForeignKey, func
-)
-from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
+from pydantic import BaseModel
 from jose import jwt
 from passlib.context import CryptContext
 from typing import Optional, List
 import datetime
+from sqlalchemy.orm import Session
+
+
+from models import (
+    User, Produto, Venda, VendaItem,
+    Base, get_db, SessionLocal, UserCreate,UserLogin, ProdutoSchema,
+    VendaCreate,VendaRead
+)
 
 app = FastAPI()
 
@@ -27,141 +29,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATABASE_URL = "sqlite:///./users.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "segredo_super_seguro"
 ALGORITHM = "HS256"
 
-# -----------------------------
-# USERS
-# -----------------------------
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String)
-    email = Column(String, unique=True)
-    senha = Column(String)
-    cargo = Column(String)
 
-
-class UserCreate(BaseModel):
-    nome: str
-    email: str
-    senha: str
-    cargo: str
-
-class UserLogin(BaseModel):
-    email: str
-    senha: str
-
-# -----------------------------
-# PRODUTOS
-# -----------------------------
-class Produto(Base):
-    __tablename__ = "produtos"
-    id = Column(Integer, primary_key=True, index=True)
-    marca = Column(String)
-    sabor = Column(String)
-    lote = Column(Integer)
-    validade = Column(DateTime)
-    valor = Column(Float)
-    quantidade = Column(Integer, default=1)  # 🟢 campo adicionado
-
-class ProdutoSchema(BaseModel):
-    marca: str
-    sabor: str
-    lote: int
-    validade: str
-    valor: float
-    quantidade: int = 1
-
-    class Config:
-        from_attributes = True
-
-
-# -----------------------------
-# VENDAS + ITENS
-# -----------------------------
-# -----------------------------
-# VENDAS + ITENS
-# -----------------------------
-class Venda(Base):
-    __tablename__ = "vendas"
-    id = Column(Integer, primary_key=True, index=True)
-    cliente = Column(String(200), nullable=False)
-    endereco = Column(String(300), nullable=True)
-    status = Column(String(50), nullable=False, default="Em preparo")
-    valor_total = Column(Float, default=0.0)
-    created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
-
-    items = relationship("VendaItem", back_populates="venda", cascade="all, delete-orphan")
-
-
-class VendaItem(Base):
-    __tablename__ = "venda_items"
-    id = Column(Integer, primary_key=True, index=True)
-    venda_id = Column(Integer, ForeignKey("vendas.id", ondelete="CASCADE"), nullable=False)
-    produto_id = Column(Integer, nullable=False)
-    nome = Column(String, nullable=False)
-    quantidade = Column(Integer, nullable=False)
-    valor_unit = Column(Float, nullable=False)
-    subtotal = Column(Float, nullable=False)
-
-    venda = relationship("Venda", back_populates="items")
-
-
-
-# --------------- Pydantic schemas para Vendas ---------------
-class VendaItemCreate(BaseModel):
-    produto_id: int
-    quantidade: int = 1
-
-class VendaItemRead(BaseModel):
-    produto_id: int
-    nome: str
-    quantidade: int
-    valor_unit: float
-    subtotal: float
-    class Config: orm_mode = True
-
-class VendaCreate(BaseModel):
-    cliente: str
-    endereco: Optional[str] = None
-    items: List[VendaItemCreate]
-
-class VendaRead(BaseModel):
-    id: int
-    cliente: str
-    endereco: Optional[str]
-    status: str
-    valor_total: float
-    created_at: datetime.datetime
-    items: List[VendaItemRead]
-    class Config: orm_mode = True
-
-
-# -----------------------------
-# CREATE TABLES
-# -----------------------------
-Base.metadata.create_all(bind=engine)
-
-# -----------------------------
-# DB dependency
-# -----------------------------
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# -----------------------------
-# AUTH helpers
-# -----------------------------
 def create_token(email: str):
     payload = {
         "sub": email,
@@ -169,33 +42,38 @@ def create_token(email: str):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-# -----------------------------
-# USERS routes (kept same)
-# -----------------------------
+
+
 @app.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email já cadastrado!")
 
-    hashed_pw = pwd_context.hash(user.senha[:72])
+    senha_limpa = user.senha[:72] 
+    hashed_pw = pwd_context.hash(senha_limpa)
+
     new_user = User(nome=user.nome, email=user.email, senha=hashed_pw, cargo=user.cargo)
     db.add(new_user)
     db.commit()
     return {"message": "Usuário criado com sucesso!"}
 
+
 @app.post("/login")
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == credentials.email).first()
-    if not user or not pwd_context.verify(credentials.senha, user.senha):
+    if not user:
+        raise HTTPException(status_code=401, detail="Credenciais inválidas!")
+
+    senha_limpa = credentials.senha[:72]
+
+    if not pwd_context.verify(senha_limpa, user.senha):
         raise HTTPException(status_code=401, detail="Credenciais inválidas!")
 
     token = create_token(user.email)
     return {"access_token": token, "user": user.nome, "cargo": user.cargo}
 
 
-# -----------------------------
-# PRODUTOS routes (kept + returns valor)
-# -----------------------------
+
 @app.post("/produtos")
 def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
     validade_dt = datetime.datetime.strptime(produto.validade, "%Y-%m-%d")
@@ -204,23 +82,19 @@ def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
         sabor=produto.sabor,
         lote=produto.lote,
         validade=validade_dt,
-        valor=produto.valor
+        valor=produto.valor,
+        quantidade=produto.quantidade
     )
     db.add(novo)
     db.commit()
     db.refresh(novo)
-    return {
-        "id": novo.id,
-        "marca": novo.marca,
-        "sabor": novo.sabor,
-        "lote": novo.lote,
-        "validade": novo.validade.strftime("%Y-%m-%d"),
-        "valor": novo.valor
-    }
+    return novo
+
 
 @app.get("/produtos")
 def listar_produtos(db: Session = Depends(get_db)):
     produtos = db.query(Produto).all()
+<<<<<<< HEAD
     return [
         {
             "id": p.id,
@@ -233,6 +107,9 @@ def listar_produtos(db: Session = Depends(get_db)):
         }
         for p in produtos
     ]
+=======
+    return produtos
+>>>>>>> d8318584ac012367d85e4f5141923d6133e9df05
 
 
 @app.put("/produtos/{produto_id}")
@@ -241,37 +118,16 @@ def update_produto(produto_id: int, dados: dict, db: Session = Depends(get_db)):
     if not p:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    if "marca" in dados:
-        p.marca = dados["marca"]
-
-    if "sabor" in dados:
-        p.sabor = dados["sabor"]
-
-    if "lote" in dados:
-        p.lote = dados["lote"]
-
-    if "valor" in dados:
-        p.valor = dados["valor"]
+    for campo in ["marca", "sabor", "lote", "valor", "quantidade"]:
+        if campo in dados:
+            setattr(p, campo, dados[campo])
 
     if "validade" in dados:
         p.validade = datetime.datetime.strptime(dados["validade"], "%Y-%m-%d")
 
-    # 🟢 ADICIONADO: atualizar quantidade
-    if "quantidade" in dados:
-        p.quantidade = dados["quantidade"]
-
     db.commit()
     db.refresh(p)
-
-    return {
-        "id": p.id,
-        "marca": p.marca,
-        "sabor": p.sabor,
-        "lote": p.lote,
-        "validade": p.validade.strftime("%Y-%m-%d") if p.validade else None,
-        "valor": p.valor,
-        "quantidade": p.quantidade  # 🟢 devolve quantidade também
-    }
+    return p
 
 
 @app.delete("/produtos/{produto_id}", status_code=204)
@@ -283,9 +139,8 @@ def delete_produto(produto_id: int, db: Session = Depends(get_db)):
     db.commit()
     return None
 
-# -----------------------------
-# VENDAS routes (multi-item support)
-# -----------------------------
+
+
 @app.post("/vendas", response_model=VendaRead)
 def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
     if not venda.items:
@@ -326,24 +181,17 @@ def create_venda(venda: VendaCreate, db: Session = Depends(get_db)):
             )
         )
 
-        # 🔥🔥🔥 ATUALIZAÇÃO DO ESTOQUE (Faltava isso!)
         if prod.quantidade is None:
             prod.quantidade = 0
 
         prod.quantidade -= qty
-
         if prod.quantidade < 0:
             prod.quantidade = 0
-
-
-    
-        
 
     db.add_all(itens_to_add)
     nova.valor_total = total
     db.commit()
     db.refresh(nova)
-
 
     return nova
 
@@ -360,6 +208,8 @@ def get_venda(venda_id: int, db: Session = Depends(get_db)):
     if not venda:
         raise HTTPException(status_code=404, detail="Venda não encontrada")
     return venda
+
+
 @app.put("/vendas/{venda_id}", response_model=VendaRead)
 def update_venda(venda_id: int, payload: dict, db: Session = Depends(get_db)):
     v = db.query(Venda).filter(Venda.id == venda_id).first()

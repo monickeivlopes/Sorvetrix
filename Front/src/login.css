@@ -1,9 +1,4 @@
-/* =========================================================
-   LOGIN PAGE
-========================================================= */
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+
 :root {
   --mint: #c2ffd9;
   --yellow: #ffcd5c;
@@ -18,9 +13,7 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -31,9 +24,7 @@
   width: 100%;
 }
 
-/* =========================================================
-   APP STRUCTURE
-========================================================= */
+
 .app {
   width: 100%;
   height: 100vh;
@@ -58,7 +49,7 @@ header {
   width: 100%;
 }
 
-/* Logo */
+
 .logo {
   width: 72px;
   height: 72px;
@@ -101,9 +92,7 @@ nav a:hover {
   color: var(--pink-light);
 }
 
-/* =========================================================
-   MAIN & GENERAL LAYOUTS
-========================================================= */
+
 main {
   flex: 1;
   padding: 10px;
@@ -116,8 +105,9 @@ main {
 
 
 #login.screen {
-  width: 70%;
-  margin-left: 15%;
+  width: 50%;
+  margin-left: 25%;
+ 
  
  
   display: flex;
@@ -125,25 +115,27 @@ main {
   align-items: center;
 }
 
-/* Container com o card */
+
 #login .layout {
+  align-self: center;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+ 
 }
 
-/* Card à direita (onde ficam os inputs) */
+
 #login .right.card {
-  width: 100%;
-  max-width: 480px;
+  width: 70%;
+  
   padding: 32px;
   border-radius: 16px;
   background: white;
   box-shadow: 0 10px 28px rgba(0,0,0,0.06);
 }
 
-/* Área interna do formulário */
+
 #login .right.card > div {
   width: 100%;
 }
@@ -151,13 +143,13 @@ main {
   width: 100%;
 }
 
-/* Título */
+
 #login h2 {
   color: var(--brown);
   margin-bottom: 16px;
 }
 
-/* Inputs */
+
 #login input {
   margin-top: 6px;
   margin-bottom: 14px;
@@ -176,7 +168,6 @@ main {
   outline: none;
 }
 
-/* Botão “Entrar” */
 #login .btn {
   width: 100%;
   padding: 12px 18px;
@@ -200,7 +191,7 @@ main {
   cursor: not-allowed;
 }
 
-/* Link "Esqueceu a senha?" */
+
 #login p {
   color: var(--pink-test);
   font-weight: 600;

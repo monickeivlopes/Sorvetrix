@@ -1,6 +1,4 @@
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+
 :root {
   --mint: #c2ffd9;
   --yellow: #ffcd5c;
@@ -15,18 +13,16 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
+
 * {
   box-sizing: border-box;
 }
 
 footer{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5%;
-    margin-bottom: 2%;
+  margin-top: 5%;
+    position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+     text-align: center;
 }

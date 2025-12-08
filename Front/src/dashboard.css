@@ -1,6 +1,4 @@
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+
 :root {
   --mint: #c2ffd9;
   --yellow: #ffcd5c;
@@ -15,9 +13,6 @@
   --pink-test: #f0208f;
 }
 
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
 * {
   box-sizing: border-box;
 }
@@ -35,9 +30,6 @@ html, body {
   width: 100%;
 }
 
-/* =========================================================
-   MAIN & GENERAL LAYOUTS
-========================================================= */
 main {
   flex: 1;
   padding: 16px;
@@ -59,11 +51,7 @@ main {
   position: relative;
 }
 
-/* ================================
-   Dashboard Custom Styles
-================================ */
 
-/* Sidebar */
 .sidemenu {
   background: #fffdef;
   border-radius: 12px;
@@ -96,7 +84,7 @@ main {
   font-weight: 700;
 }
 
-/* Cards */
+
 .card{
   border-radius: 12px;
   padding: 12px;
@@ -138,7 +126,7 @@ main {
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Layout principal */
+
 .grid {
   display: flex;
   gap: 22px;
@@ -160,9 +148,6 @@ main {
   border-radius: 4px;
 }
 
-/* =========================================================
-   RESPONSIVIDADE
-========================================================= */
 
 /* ----------- Telas até 1200px ----------- */
 @media (max-width: 1200px) {
