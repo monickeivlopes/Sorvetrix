@@ -94,7 +94,7 @@ def create_produto(produto: ProdutoSchema, db: Session = Depends(get_db)):
 @app.get("/produtos")
 def listar_produtos(db: Session = Depends(get_db)):
     produtos = db.query(Produto).all()
-<<<<<<< HEAD
+
     return [
         {
             "id": p.id,
@@ -107,9 +107,6 @@ def listar_produtos(db: Session = Depends(get_db)):
         }
         for p in produtos
     ]
-=======
-    return produtos
->>>>>>> d8318584ac012367d85e4f5141923d6133e9df05
 
 
 @app.put("/produtos/{produto_id}")

@@ -179,8 +179,5 @@ const styles = {
     textAlign: "center",
     marginTop: "15px"
   }
-<<<<<<< HEAD
+
 };
-=======
-};
->>>>>>> d8318584ac012367d85e4f5141923d6133e9df05
