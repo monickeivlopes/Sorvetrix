@@ -10,13 +10,23 @@ export default function Stocks({ screen }) {
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState({});
 
+  // 🔹 Modal local estilo Login/Register
+  const [modal, setModal] = useState({ open: false, message: "", success: false });
+
+  const openModal = (msg, success = false) => {
+    setModal({ open: true, message: msg, success });
+  };
+
+  const closeModal = () => {
+    setModal({ ...modal, open: false });
+  };
+
   const fetchProdutos = async () => {
     try {
       const response = await fetch("http://localhost:8000/produtos");
       const data = await response.json();
       setProdutos(data);
 
-      
       const map = {};
       data.forEach((p) => {
         map[p.id] = {
@@ -25,13 +35,14 @@ export default function Stocks({ screen }) {
           lote: p.lote,
           validade: p.validade ? p.validade.split("T")[0] : "",
           valor: p.valor,
-          quantidade: p.quantidade ?? 1, 
+          quantidade: p.quantidade ?? 1,
         };
       });
       setEditData(map);
 
     } catch (error) {
-      console.error("Erro ao carregar produtos:", error);
+      openModal("Erro ao carregar produtos!", false);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -60,17 +71,17 @@ export default function Stocks({ screen }) {
         });
       }
 
-      alert("Estoque atualizado com sucesso!");
+      openModal("Estoque atualizado com sucesso!", true);
       setEditMode(false);
       fetchProdutos();
 
     } catch (error) {
       console.error("Erro ao salvar estoque:", error);
-      alert("Erro ao salvar estoque!");
+      openModal("Erro ao salvar estoque!", false);
     }
   };
 
-   
+
   const produtosPorLote = produtos.reduce((grp, p) => {
     const key = `${p.lote}::${p.marca}::${p.sabor}`;
     if (!grp[key])
@@ -91,16 +102,15 @@ export default function Stocks({ screen }) {
       <section id="stock" className={`screen ${screen === "stock" ? "show" : ""}`}>
         <div className="drip"></div>
 
-        <div className="card" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        <div className="card" style={{ height: "100%", display:"flex", flexDirection:"column" }}>
 
-          
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
             <div>
-              <h2 style={{ margin: 0, color: "var(--brown)" }}>Gerenciamento de Estoque</h2>
-              <div style={{ color: "rgba(107,63,63,0.6)" }}>Agrupado por lote</div>
+              <h2 style={{ margin:0, color:"var(--brown)" }}>Gerenciamento de Estoque</h2>
+              <div style={{ color:"rgba(107,63,63,0.6)" }}>Agrupado por lote</div>
             </div>
 
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div style={{ display:"flex", gap:"10px" }}>
               <button className="btn" onClick={() => setEditMode(!editMode)}>
                 {editMode ? "Cancelar" : "✎ Editar Estoque"}
               </button>
@@ -117,18 +127,14 @@ export default function Stocks({ screen }) {
             </div>
           </div>
 
-          
-          <div style={{ marginTop: "18px", flex: 1, overflow: "auto" }}>
-            {loading && (
-              <div style={{ padding: "20px", color: "gray" }}>Carregando produtos...</div>
-            )}
+          <div style={{ marginTop:"18px", flex:1, overflow:"auto" }}>
+            {loading && <div style={{ padding:"20px", color:"gray" }}>Carregando produtos...</div>}
 
             {!loading &&
               Object.keys(produtosPorLote).map((key) => {
                 const grp = produtosPorLote[key];
                 const itens = grp.items;
 
-                 
                 const quantidade = itens.reduce(
                   (sum, i) => sum + (i.quantidade ?? 1),
                   0
@@ -138,13 +144,11 @@ export default function Stocks({ screen }) {
                 const isLow = quantidade < 15;
 
                 return (
-                  <div key={key} className="card" style={{ marginBottom: "14px", padding: "18px" }}>
-
-                    
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div key={key} className="card" style={{ marginBottom:"14px", padding:"18px" }}>
+                    <div style={{ display:"flex", justifyContent:"space-between" }}>
                       <div>
-                        <h3 style={{ margin: 0 }}>Lote {grp.lote}</h3>
-                        <div style={{ fontSize: "13px", color: "rgba(107,63,63,0.6)" }}>
+                        <h3 style={{ margin:0 }}>Lote {grp.lote}</h3>
+                        <div style={{ fontSize:"13px", color:"rgba(107,63,63,0.6)" }}>
                           Validade: {formatDate(validade)}
                         </div>
                       </div>
@@ -152,64 +156,34 @@ export default function Stocks({ screen }) {
                       <div
                         className="qty"
                         style={{
-                          padding: "8px 16px",
-                          borderRadius: "8px",
+                          padding:"8px 16px",
+                          borderRadius:"8px",
                           background: isLow ? "#ffcccc" : "#d6f5d6",
                           color: isLow ? "#a10000" : "green",
-                          fontWeight: "bold",
+                          fontWeight:"bold",
                         }}
                       >
                         {quantidade} {isLow ? "⚠ Baixo" : "em estoque"}
                       </div>
                     </div>
 
-                    
-                    <div style={{ marginTop: "12px" }}>
+                    <div style={{ marginTop:"12px" }}>
                       {itens.map((p) => (
-                        <div key={p.id} className="item" style={{ marginBottom: "14px" }}>
+                        <div key={p.id} className="item" style={{ marginBottom:"14px" }}>
+
                           {editMode ? (
                             <>
-                              <input
-                                className="input"
-                                value={editData[p.id].sabor}
-                                onChange={(e) => handleEditChange(p.id, "sabor", e.target.value)}
-                              />
-                              <input
-                                className="input"
-                                value={editData[p.id].marca}
-                                onChange={(e) => handleEditChange(p.id, "marca", e.target.value)}
-                              />
-                              <input
-                                className="input"
-                                value={editData[p.id].lote}
-                                onChange={(e) => handleEditChange(p.id, "lote", e.target.value)}
-                              />
-                              <input
-                                className="input"
-                                type="date"
-                                value={editData[p.id].validade}
-                                onChange={(e) => handleEditChange(p.id, "validade", e.target.value)}
-                              />
-                              <input
-                                className="input"
-                                type="number"
-                                value={editData[p.id].valor}
-                                onChange={(e) => handleEditChange(p.id, "valor", e.target.value)}
-                              />
-
-                              
-                              <input
-                                className="input"
-                                type="number"
-                                min="0"
-                                value={editData[p.id].quantidade}
-                                onChange={(e) => handleEditChange(p.id, "quantidade", Number(e.target.value))}
-                              />
+                              <input className="input" value={editData[p.id].sabor} onChange={(e) => handleEditChange(p.id, "sabor", e.target.value)} />
+                              <input className="input" value={editData[p.id].marca} onChange={(e) => handleEditChange(p.id, "marca", e.target.value)} />
+                              <input className="input" value={editData[p.id].lote} onChange={(e) => handleEditChange(p.id, "lote", e.target.value)} />
+                              <input className="input" type="date" value={editData[p.id].validade} onChange={(e) => handleEditChange(p.id, "validade", e.target.value)} />
+                              <input className="input" type="number" value={editData[p.id].valor} onChange={(e) => handleEditChange(p.id, "valor", e.target.value)} />
+                              <input className="input" type="number" min="0" value={editData[p.id].quantidade} onChange={(e) => handleEditChange(p.id, "quantidade", Number(e.target.value))} />
                             </>
                           ) : (
                             <>
-                              <strong>{p.sabor}</strong> — {p.marca}  
-                              <span style={{ marginLeft: "8px", opacity: 0.7 }}>
+                              <strong>{p.sabor}</strong> — {p.marca}
+                              <span style={{ marginLeft:"8px", opacity:0.7 }}>
                                 ({p.quantidade ?? 1} unid.)
                               </span>
                             </>
@@ -217,14 +191,24 @@ export default function Stocks({ screen }) {
                         </div>
                       ))}
                     </div>
-
                   </div>
                 );
               })}
           </div>
         </div>
       </section>
-      <Footer/>
+
+      <Footer />
+
+      {/* 🔹 Modal local visual */}
+      {modal.open && (
+        <div className="modal-bg">
+          <div className="modal-box">
+            <p>{modal.message}</p>
+            <button className="btn" onClick={closeModal}>OK</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
