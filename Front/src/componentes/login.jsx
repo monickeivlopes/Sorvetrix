@@ -30,7 +30,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🔹 controle do modal
+
   const [modalMessage, setModalMessage] = useState("");
   const [modalType, setModalType] = useState("success");
 
@@ -105,9 +105,6 @@ export default function Login() {
                 {loading ? "Entrando..." : "Entrar"}
               </button>
 
-              <p style={styles.link} onClick={() => navigate("/forgot")}>
-                Esqueceu a senha?
-              </p>
 
               <div style={styles.center}>
                 <a onClick={() => navigate("/register")}>Criar uma conta</a>
